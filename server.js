@@ -19,11 +19,15 @@ const io = new Server(server, {
 // ============================
 // CONFIGURAÃ‡Ã•ES
 // ============================
-const PORT = 3000;
-const DATA_FILE = path.join(__dirname, "data.json");
-const DATA_FILE_BAK = path.join(__dirname, "data.json.bak");
-const LEGACY_DATA_FILE = path.join(__dirname, "dados.json");
-const BACKUP_DIR = path.join(__dirname, "backups");
+const PORT = process.env.PORT || 3000;
+const DATA_DIR = process.env.DATA_DIR || __dirname;
+const DATA_FILE = path.join(DATA_DIR, "data.json");
+const DATA_FILE_BAK = path.join(DATA_DIR, "data.json.bak");
+const LEGACY_DATA_FILE = path.join(DATA_DIR, "dados.json");
+const BACKUP_DIR = path.join(DATA_DIR, "backups");
+const LOCAL_DATA_FILE = path.join(__dirname, "data.json");
+const LOCAL_DATA_FILE_BAK = path.join(__dirname, "data.json.bak");
+const LOCAL_LEGACY_DATA_FILE = path.join(__dirname, "dados.json");
 const DAILY_BACKUP_PREFIX = "data-backup-";
 const DAILY_BACKUP_RETENTION_DAYS = 90;
 
@@ -140,7 +144,14 @@ function prepararDadosEquipeServidor() {
 // PERSISTÃŠNCIA
 // ============================
 function carregarDados() {
-    const candidatos = [DATA_FILE, DATA_FILE_BAK, LEGACY_DATA_FILE];
+    const candidatos = [
+        DATA_FILE,
+        DATA_FILE_BAK,
+        LEGACY_DATA_FILE,
+        LOCAL_DATA_FILE,
+        LOCAL_DATA_FILE_BAK,
+        LOCAL_LEGACY_DATA_FILE
+    ];
     let dataCarregada = null;
     let origem = null;
 
@@ -181,6 +192,9 @@ function salvarDados() {
     };
     const tempFile = `${DATA_FILE}.tmp`;
     try {
+        if (!fs.existsSync(DATA_DIR)) {
+            fs.mkdirSync(DATA_DIR, { recursive: true });
+        }
         if (fs.existsSync(DATA_FILE)) {
             fs.copyFileSync(DATA_FILE, DATA_FILE_BAK);
         }
@@ -427,6 +441,7 @@ server.listen(PORT, "0.0.0.0", () => {
     console.log(`   Acesse nas mÃ¡quinas da loja por: http://${IP_LOCAL}:${PORT}`);
     console.log(`   Exemplo: http://192.168.19.199:3000\n`);
     console.log(`   Arquivos servidos da pasta: ${path.join(__dirname, "public")}`);
+    console.log(`   Data dir: ${DATA_DIR}`);
     console.log(`   Dados salvos em: ${DATA_FILE}\n`);
 });
 
