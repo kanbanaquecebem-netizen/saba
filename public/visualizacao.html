@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>SABA • Visualização</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: rgb(255, 255, 255);
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    overflow: hidden;
+}
+
+header {
+    background: rgb(255, 255, 255);
+    color: rgb(53, 61, 77);
+    padding: 10px 0;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    border-bottom: 3px solid rgb(255, 136, 0);
+}
+#relogio {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 4px;
+    color: #353d61;
+}
+#contadorCards {
+    font-size: 14px;
+    font-weight: bold;
+    color: #353d61;
+    margin-top: 6px;
+}
+
+.container {
+    display: flex;
+    margin: 10px;
+    height: calc(100vh - 130px);
+    gap: 8px;
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+.coluna {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 3px;
+    padding: 3px;                     /* ESPAÇO UNIFORME DA BORDA PARA OS CARDS */
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    border: 2px solid rgb(53, 61, 77);
+}
+.coluna h2 {
+    text-align: center;
+    font-size: 26px;
+    color: rgb(53, 61, 77);
+    font-weight: bold;
+    margin: 0 0 10px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(255, 136, 0, 0.95);
+    padding: 3px 0;
+}
+
+/* Container interno dos cards - espaçamento pequeno e uniforme */
+.coluna > div[id] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;                         /* pequeno espaço entre cards */
+    justify-content: flex-start;       /* alinhado à esquerda como na foto */
+    padding: 0;
+}
+
+/* Cards menores, compactos e com aparência da foto */
+.card {
+    border-radius: 5px;
+    padding: 4px 7px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    text-align: center;
+    font-weight: bold;
+    font-size: 10px;
+    cursor: pointer;
+    transition: transform 0.15s;
+    flex: 0 0 calc(25% - 7.5px);       /* exatamente 4 por linha */
+    max-width: 200px;
+    min-width: 180px;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.card:hover {
+    transform: scale(1.03);
+}
+
+/* Cores exatas da sua foto */
+.impressao-card    { background: #ff0000 !important; color: #fff !important; }
+.separacao-card    { background: #ffc800 !important; color: #000 !important; }
+.aguardando-os     { background: #369aff !important; color: #000 !important; }
+.aguardando-pv     { background: #003087 !important; color: #fff !important; }
+
+/* Contador no título */
+.contador {
+    font-size: 0.65em;
+    color: #000;
+    background: rgba(255,255,255,0.9);
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin-left: 10px;
+}
+
+/* Piscar observação */
+@keyframes piscarObservacao {
+    0%   { box-shadow: 0 0 8px rgba(255,0,0,0.6); }
+    50%  { box-shadow: 0 0 20px rgba(255,0,0,1); }
+    100% { box-shadow: 0 0 20px rgba(255,0,0,0.6); }
+}
+.card.tem-observacao {
+    animation: piscarObservacao 1.5s infinite;
+    border: 3px solid #fff;
+}
+
+/* Alerta de prazo (etiqueta + piscar) */
+@keyframes piscarPrazo {
+    0%   { box-shadow: 0 0 8px rgba(209, 0, 0, 0.6); }
+    50%  { box-shadow: 0 0 22px rgba(209, 0, 0, 1); }
+    100% { box-shadow: 0 0 8px rgba(209, 0, 0, 0.6); }
+}
+
+.card.prazo-alerta {
+    animation: piscarPrazo 0.9s infinite ease-in-out;
+}
+
+.etiqueta-alerta {
+    display: inline-block;
+    background: #d10000;
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 5px;
+    margin: 2px 0 5px;
+    letter-spacing: 0.3px;
+}
+
+.etiqueta-alerta.roxa {
+    background: #6f2dbd;
+}
+
+/* Modal (mantido simples) */
+.modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    z-index: 1001;
+}
+.modal-content {
+    background: #fff;
+    color: #000;
+    padding: 20px;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Scroll invisível */
+.coluna::-webkit-scrollbar { display: none; }
+.coluna { scrollbar-width: none; -ms-overflow-style: none; }
+</style>
+</head>
+<body>
+
+<header>
+    <img src="logo.png.png" alt="Logo SABA" style="height: 90px; margin-bottom: -20px;">
+    <div id="relogio"></div>
+    <div id="contadorCards">
+        Total de cards visíveis: <span id="totalCards">0</span>
+    </div>
+</header>
+
+<div class="container">
+    <div class="coluna">
+        <h2>🖨️ Impressão<span class="contador" data-status="impressao">(0)</span></h2>
+        <div id="impressao"></div>
+    </div>
+    <div class="coluna">
+        <h2>📦 Em Separação<span class="contador" data-status="em_separacao">(0)</span></h2>
+        <div id="em_separacao"></div>
+    </div>
+    <div class="coluna">
+        <h2>📫 Aguardando Retirada<span class="contador" data-status="aguardando_retirada">(0)</span></h2>
+        <div id="aguardando_retirada"></div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal" onclick="fecharModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h3 id="modalTitulo"></h3>
+        <div id="modalInfo"></div>
+    </div>
+</div>
+
+<script>
+// FUNÇÕES (mantidas iguais, só ajustei fonte para combinar com cards menores)
+function atualizarRelogio() {
+    const agora = new Date();
+    document.getElementById("relogio").textContent = agora.toLocaleString("pt-BR");
+}
+setInterval(atualizarRelogio, 1000);
+atualizarRelogio();
+
+function atualizarContadores() {
+    const contagem = { impressao: 0, em_separacao: 0, aguardando_retirada: 0 };
+    (window.pedidos || []).forEach(p => {
+        if (contagem[p.status] !== undefined) contagem[p.status]++;
+    });
+
+    document.querySelectorAll('.contador').forEach(el => {
+        const st = el.dataset.status;
+        if (st in contagem) el.textContent = `(${contagem[st]})`;
+    });
+
+    document.getElementById("totalCards").textContent = (window.pedidos || []).filter(p => 
+        ["impressao","em_separacao","aguardando_retirada"].includes(p?.status)
+    ).length;
+}
+
+/* ------------------------- Regras de alerta de prazo ------------------------- */
+const MS_DIA = 24 * 60 * 60 * 1000;
+
+function normalizarDataInstalacao(dataInstalacao) {
+    if (!dataInstalacao) return null;
+    const partes = dataInstalacao.split(" - ");
+    const dataParte = partes[0] || "";
+    const [dia, mes, ano] = dataParte.split("/");
+    if (!dia || !mes || !ano) return null;
+    const d = new Date(parseInt(ano, 10), parseInt(mes, 10) - 1, parseInt(dia, 10));
+    return isNaN(d.getTime()) ? null : d;
+}
+
+function obterDataCriacao(pedido) {
+    const historico = pedido.historico || [];
+    const criado = historico.find(h => (h.acao || "").startsWith("Criado"));
+    if (criado && criado.hora) return new Date(criado.hora);
+    const primeira = historico[0];
+    return primeira && primeira.hora ? new Date(primeira.hora) : null;
+}
+
+function isInstalacaoProxima(pedido, diasLimite = 1) {
+    const dataInst = normalizarDataInstalacao(pedido.dataInstalacao);
+    if (!dataInst) return false;
+    const hoje = new Date();
+    const hojeZerado = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+    const diffDias = Math.floor((dataInst - hojeZerado) / MS_DIA);
+    return diffDias >= 0 && diffDias <= diasLimite;
+}
+
+function isMaisDe7Dias(pedido) {
+    const dataCriacao = obterDataCriacao(pedido);
+    if (!dataCriacao) return false;
+    const diffDias = Math.floor((Date.now() - dataCriacao.getTime()) / MS_DIA);
+    return diffDias > 7;
+}
+
+function emojiStatus(status) {
+    return { impressao: "🖨️", em_separacao: "📦", aguardando_retirada: "📫" }[status] || "";
+}
+
+function renderizar() {
+    const colunas = {
+        impressao: document.getElementById("impressao"),
+        em_separacao: document.getElementById("em_separacao"),
+        aguardando_retirada: document.getElementById("aguardando_retirada")
+    };
+
+    Object.values(colunas).forEach(c => c.innerHTML = "");
+
+    (window.pedidos || []).forEach(p => {
+        if (!colunas[p.status]) return;
+
+        const card = document.createElement("div");
+        let classe = "";
+        if (p.status === "impressao") classe = "impressao-card";
+        else if (p.status === "em_separacao") classe = "separacao-card";
+        else if (p.status === "aguardando_retirada") classe = p.tipo === "PV" ? "aguardando-pv" : "aguardando-os";
+
+        card.className = `card ${classe}`;
+
+        const instalacaoProxima = isInstalacaoProxima(p);
+        const maisDe7Dias = isMaisDe7Dias(p);
+        const precisaAlerta = instalacaoProxima || maisDe7Dias;
+        if (precisaAlerta) card.classList.add("prazo-alerta");
+
+        let etiquetaAlerta = "";
+        if (precisaAlerta) {
+            let textoAlerta = instalacaoProxima && maisDe7Dias
+                ? "ATENCAO"
+                : (instalacaoProxima ? "INSTALACAO PROXIMA" : "MAIS DE 7 DIAS");
+            let tituloAlerta = [];
+            if (instalacaoProxima) tituloAlerta.push("Instalacao proxima");
+            if (maisDe7Dias) tituloAlerta.push("Mais de 7 dias desde o cadastro");
+            const classeEtiqueta = (instalacaoProxima && !maisDe7Dias) ? "etiqueta-alerta roxa" : "etiqueta-alerta";
+            etiquetaAlerta = `<div class="${classeEtiqueta}" title="${tituloAlerta.join(' / ')}">${textoAlerta}</div>`;
+        }
+        if (p.observacao && p.observacao.trim()) card.classList.add("tem-observacao");
+
+        const ultima = p.historico?.[p.historico.length - 1]?.hora || Date.now();
+        const dataHora = new Date(ultima).toLocaleString("pt-BR");
+
+        let instalacaoHtml = p.dataInstalacao ? `<div style="font-size:12px; color:#000; margin:3px 0;">
+            <strong>Instalação:</strong> ${p.dataInstalacao}
+        </div>` : "";
+
+        let obsHtml = "";
+        if (p.observacao && p.observacao.trim()) {
+            const texto = p.observacao.length > 60 ? p.observacao.substring(0,57) + "..." : p.observacao;
+            obsHtml = `<div style="font-size:11px; margin:4px 0; padding:4px; background:rgba(0,0,0,0.2); border-radius:4px;">
+                <strong>Obs:</strong> ${texto}
+            </div>`;
+        }
+
+        card.innerHTML = `
+            <div style="font-size:16px;">
+                ${emojiStatus(p.status)} ${p.tipo} ${p.numero}
+            </div>
+            <div style="font-size:20px; margin:6px 0;">
+                ${p.nome}
+            </div>
+            ${etiquetaAlerta}
+            ${instalacaoHtml}
+            ${obsHtml}
+            <div style="font-size:12px; opacity:0.9;">
+                ${dataHora}
+            </div>
+        `;
+
+        card.onclick = () => {
+            document.getElementById("modalTitulo").textContent = `${p.tipo} ${p.numero}`;
+            let etiquetaModal = "";
+            if (precisaAlerta) {
+                const classeEtiqueta = (instalacaoProxima && !maisDe7Dias) ? "etiqueta-alerta roxa" : "etiqueta-alerta";
+                let textoAlerta = instalacaoProxima && maisDe7Dias
+                    ? "ATENCAO"
+                    : (instalacaoProxima ? "INSTALACAO PROXIMA" : "MAIS DE 7 DIAS");
+                let tituloAlerta = [];
+                if (instalacaoProxima) tituloAlerta.push("Instalacao proxima");
+                if (maisDe7Dias) tituloAlerta.push("Mais de 7 dias desde o cadastro");
+                etiquetaModal = `<div class="${classeEtiqueta}" title="${tituloAlerta.join(' / ')}">${textoAlerta}</div>`;
+            }
+            let info = `
+                ${etiquetaModal}
+                <strong>Cliente/Técnico:</strong> ${p.nome}<br>
+                <strong>Vendedor:</strong> ${p.vendedor || "Não informado"}<br>
+                ${p.dataInstalacao ? '<strong>Instalação:</strong> ' + p.dataInstalacao + '<br>' : ''}
+                ${p.observacao ? '<br><strong>Observação:</strong><br><div style="white-space:pre-wrap; background:#f8f8f8; padding:10px; border-radius:6px;">' + p.observacao + '</div>' : ''}
+                <br><strong>Histórico:</strong><br>${(p.historico || []).map(h => `• ${h.acao} — ${new Date(h.hora).toLocaleString("pt-BR")}`).join('<br>')}
+            `;
+            document.getElementById("modalInfo").innerHTML = info;
+            document.getElementById("modal").style.visibility = "visible";
+        };
+
+        colunas[p.status].appendChild(card);
+    });
+
+    atualizarContadores();
+}
+
+function fecharModal() {
+    document.getElementById("modal").style.visibility = "hidden";
+}
+
+// Inicializa
+renderizar();
+atualizarContadores();
+
+// Limpeza finalizados (background)
+setInterval(() => {
+    const agora = Date.now();
+    const limite = 5 * 60 * 1000;
+    window.pedidos = (window.pedidos || []).filter(p => {
+        if (p.status !== "finalizados") return true;
+        const fim = p.historico?.[p.historico.length-1]?.hora || 0;
+        return (agora - fim) < limite;
+    });
+    localStorage.setItem("pedidos", JSON.stringify(window.pedidos));
+    renderizar();
+}, 30000);
+
+document.addEventListener('keydown', e => {
+    if (e.key === "Escape") fecharModal();
+});
+</script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="client.js"></script>
+
+</body>
+</html>

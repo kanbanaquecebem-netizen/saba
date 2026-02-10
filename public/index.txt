@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>SABA</title>
+<style>
+/* ======================= Estilo geral ======================= */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ff9900; 
+    margin: 0;
+    padding: 0;
+    color: rgb(255, 255, 255);
+}
+header {
+    background-color: #000000; 
+    color: #ff8c00; 
+    padding: 20px 0;
+    text-align: center;
+    font-size: 34px;
+    font-weight: bold;
+    position: relative;
+    border-bottom: 3px solid #ff8c00;
+}
+#relogio {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 5px;
+    color: #ff8c00;
+}
+.header-buttons {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+}
+#btnCadastro, #btnCancelar, #btnHistorico {
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #ff8c00;
+    cursor: pointer;
+    background: black;
+    color: #ff8c00;
+    transition: background-color 0.3s, color 0.3s;
+}
+#btnCadastro:hover, #btnCancelar:hover, #btnHistorico:hover {
+    background: #000000;
+    color: rgb(30, 114, 4);
+}
+.container {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    height: calc(100vh - 140px);
+}
+.coluna {
+    flex: 1;
+    background: #ffffffcc;
+    border-radius: 15px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #ff8c00;
+    max-height: 100%;
+}
+.coluna h2 {
+    color: #ff8c00;
+    margin-top: 0;
+    text-align: center;
+    font-size: 26px;
+}
+#em_separacao, #aguardando_retirada {
+    display: flex;
+    flex-wrap: wrap;            
+    gap: 10px;
+    overflow-y: auto;           
+    max-height: 400px;          
+    padding-right: 5px;         
+}
+.card {
+    border-radius: 15px;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    transition: 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    min-width: 180px;
+    max-width: 180px;
+}
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+.red { background-color: #cc3333; color: #fff; }
+.yellow { background-color: #ffdd66; color: #000; }
+.blue { background-color: #3399ff; color: #fff; }
+.green { background-color: #33cc66; color: #fff; }
+#impressao, #finalizados {
+    overflow-y: auto;
+}
+#impressao .card, #finalizados .card {
+    max-width: none;
+    min-width: auto;
+}
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #999;
+    font-size: 16px;
+}
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #ff8c00; 
+    color: #000;
+    border: none;
+    cursor: pointer;
+}
+button:disabled {
+    background: #888;
+    cursor: default;
+}
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    z-index: 1000;
+}
+.modal-content {
+    background: #fff;
+    color: #000;
+    padding: 25px;
+    border-radius: 15px;
+    width: 60%;
+    max-width: 500px;
+    font-size: 16px;
+}
+.hidden { display: none !important; }
+.finalizado-expandido {
+    width: 100%;
+    font-size: 16px;
+}
+</style>
+</head>
+<body>
+
+<header>
+    SABA
+    <div id="relogio"></div>
+    <div class="header-buttons">
+        <button id="btnCadastro">Cadastrar</button>
+        <button id="btnCancelar">Cancelar</button>
+        <button id="btnHistorico">Histórico</button>
+    </div>
+</header>
+
+<div class="container">
+    <div class="coluna">
+        <h2>🖨️ Impressão</h2>
+        <div id="impressao"></div>
+    </div>
+    <div class="coluna">
+        <h2>📦 Em Separação</h2>
+        <div id="em_separacao"></div>
+    </div>
+    <div class="coluna">
+        <h2>📫 Aguardando Retirada</h2>
+        <div id="aguardando_retirada"></div>
+    </div>
+    <div class="coluna">
+        <h2>✅ Finalizados</h2>
+        <div id="finalizados"></div>
+    </div>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitulo"></h3>
+        <p id="modalInfo"></p>
+
+        <div id="campoCadastro" class="hidden">
+            <label>Tipo:</label>
+            <select id="tipo">
+                <option value="OS">OS</option>
+                <option value="PV">PV</option>
+            </select>
+            <label>Número:</label>
+            <input type="text" id="numero" />
+            <label>Nome Técnico / Cliente:</label>
+            <input type="text" id="nome" />
+            <label>Vendedor:</label>
+            <input type="text" id="vendedor" />
+            <button id="btnSalvarCadastro">Salvar</button>
+        </div>
+
+        <div id="campoCancelar" class="hidden">
+            <label>Digite o número da OS/PV:</label>
+            <input type="text" id="numeroCancelar" />
+            <button id="btnConfirmarCancelar" disabled>Remover</button>
+        </div>
+
+        <div id="campoImpressao" class="hidden">
+            <label>Nome de quem imprimiu:</label>
+            <input type="text" id="inputImpressor" />
+            <button id="btnImpressao" disabled>Enviar para Em Separação</button>
+        </div>
+
+        <div id="campoSeparador" class="hidden">
+            <label>Nome do Separador:</label>
+            <input type="text" id="inputSeparador" />
+            <button id="btnSeparador" disabled>Enviar para Aguardando Retirada</button>
+        </div>
+
+        <div id="campoRetirada" class="hidden">
+            <label>Técnico/Responsável:</label>
+            <input type="text" id="inputTecnico" />
+            <label>Conferente:</label>
+            <input type="text" id="inputConferente" />
+            <button id="btnRetirada" disabled>Finalizar</button>
+        </div>
+
+        <div id="campoHistorico" class="hidden">
+            <h4>Histórico de Finalizados</h4>
+            <div id="listaHistorico"></div>
+            <button id="btnFecharHistorico">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="client.js"></script>
+<script>
+function atualizarRelogio() {
+    const agora = new Date();
+    const h = agora.toLocaleTimeString("pt-BR");
+    const d = agora.toLocaleDateString("pt-BR");
+    document.getElementById("relogio").innerHTML = `${d} — ${h}`;
+}
+setInterval(atualizarRelogio, 1000);
+atualizarRelogio();
+</script>
+</body>
+</html>

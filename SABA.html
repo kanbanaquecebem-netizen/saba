@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>SABA</title>
+<style>
+/* ============================= ESTILO GERAL ============================= */
+body {
+    font-family: Arial, sans-serif;
+    background: rgb(255, 255, 255);
+    margin: 0;
+    padding: 0;
+    color: #fff;
+}
+/* ============================= CABEÇALHO ============================= */
+header {
+    background: rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+    padding: 8px 0;
+    text-align: center;
+    font-size: 34px;
+    font-weight: bold;
+    position: relative;
+    border-bottom: 3px solid rgb(255, 136, 0);
+}
+#relogio {
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 5px;
+    color: #353d61;
+}
+/* Botões do cabeçalho */
+.header-buttons-left {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    display: flex;
+    gap: 12px;
+}
+#btnCadastro, #btnCancelar {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    border: 3px solid #353d61;
+    cursor: pointer;
+}
+#btnCadastro { background: #353d61;; color:#ffffff; }
+#btnCancelar { background: rgb(255, 255, 255); color: #353d61;; }
+.header-buttons-right {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+#btnHistorico {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    background: rgba(255, 255, 255, 0.89);
+    color: #353d61;
+    border: 3px solid #353d61;
+    cursor: pointer;
+}
+/* ============================= PESQUISA MINIMALISTA (NOVA) ============================= */
+#pesquisaOSPV {
+    padding: 12px 20px;
+    width: 190px;
+    border-radius: 10px;
+    border: 3px solid #353d61;
+    font-size: 20px;
+    outline: none;
+}
+#btnPesquisar {
+    padding: 12px 20px;
+    background: #353d61;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+}
+/* ============================= CONTEÚDO ============================= */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 15px auto;
+    max-width: 100%;
+    height: calc(100vh - 140px);
+    gap: 10px;
+}
+.coluna {
+    flex: 1;
+    min-width: 20px;
+    margin: 0 10px;
+    background: rgba(255, 136, 0, 0.925);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    height: 100%;
+    border: 3px solid rgb(53, 61, 77);
+}
+.coluna h2 {
+    text-align: center;
+    font-size: 28px;
+    color: rgb(53, 61, 77);
+    font-weight: bold;
+}
+/* ============================= CARDS - CORES EXATAS COMO PEDIDO ============================= */
+.card {
+    border-radius: 12px;
+    padding: 8px 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    text-align: center;
+    font-weight: bold;
+    font-size: 15px;
+    min-width: 15px;
+    max-width: 240px;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 6px auto;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Impressão = vermelho */
+.impressao-card {
+    background: #ff0000 !important;
+    color: #fff !important;
+}
+
+/* Em Separação = amarelo */
+.separacao-card {
+    background: #ffc800 !important;
+    color: #000 !important;
+}
+
+/* Aguardando Retirada: OS = azul claro, PV = azul escuro */
+.aguardando-os {
+    background: #369aff !important;
+    color: #000 !important;
+}
+.aguardando-pv {
+    background: #003087 !important;
+    color: #fff !important;
+}
+
+/* Finalizados = verde */
+.finalizado-card {
+    background: #008a2e !important;
+    color: #fff !important;
+}
+
+/* Impressão e Finalizados: largura total */
+#impressao .card, #finalizados .card {
+    min-width: 40px;
+    max-width: 335px;
+    width: 100%;
+    margin: 5px 0;
+}
+
+/* Inputs */
+input, select, textarea {
+   width: 100%;
+    padding: 16px 12px; /* Aumenta o padding (mais alto e confortável) */
+    margin: 12px 0;
+    border-radius: 10px; /* Bordas mais arredondadas */
+    border: 2px solid #b8b5b5;
+    font-size: 18px; /* Fonte maior para facilitar digitação */
+    box-sizing: border-box;
+}
+textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    background: darkblue;
+    color: #fff;
+    border: none;
+}
+button:disabled { background: #888; }
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+}
+.modal-content {
+    background: #fff;
+    color: #000;
+    padding: 25px;
+    border-radius: 15px;
+    width: 85%;
+    max-width: 620px;
+    max-height: 92vh;
+    overflow-y: auto;
+    font-size: 16px;
+    pointer-events: auto;
+    box-sizing: border-box;
+}
+.hidden { display: none !important; }
+.finalizado-expandido {
+    width: 100%;
+    font-size: 16px;
+}
+
+/* ============================= HISTÓRICO TIPO EXCEL ============================= */
+#listaHistorico {
+    width: 100%;
+    max-height: 50vh;
+    overflow-y: auto;  /* IMPORTANTE: auto ou scroll */
+    border: 2px solid darkblue;
+    border-radius: 10px;
+    background: #fff;
+    color: #000;
+
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* IE/Edge antigo */
+}
+
+#listaHistorico::-webkit-scrollbar {
+    display: none;                /* Chrome, Safari, Edge */
+}
+.tabela-historico {
+    display: grid;
+    grid-template-columns: 80px 100px 1fr 150px;
+    gap: 0;
+    font-size: 15px;
+}
+
+.tabela-cabecalho {
+    display: contents;
+}
+
+.tabela-cabecalho > div {
+    background: darkblue;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    border-bottom: 3px solid orange;
+}
+
+.tabela-linha {
+    display: contents;
+}
+
+.tabela-linha > div {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.tabela-linha:nth-child(even) > div {
+    background: #f5f5f5;
+}
+
+.tabela-linha:nth-child(odd) > div {
+    background: #fff;
+}
+
+.tabela-detalhes {
+    grid-column: 1 / -1;
+    padding: 8px 20px;
+    font-size: 13px;
+    color: #555;
+    background: #f9f9f9;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+/* Esconde o scroll da página inteira, mas mantém o scroll nas colunas */
+body {
+    overflow: hidden; /* Esconde o scroll do body */
+}
+
+/* Versão corrigida da que você gostou: esconde scroll, mantém rolagem, permite ver o final, sem terceira coluna fantasma */
+.coluna {
+    overflow-y: auto; /* Scroll nas colunas */
+    height: calc(100vh - 140px);
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.coluna::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Edge */
+}
+
+/* Container interno flex com wrap, centralizado e sem coluna fantasma */
+#em_separacao,
+#aguardando_retirada {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* centraliza os cards e evita espaço extra */
+    align-content: flex-start; /* evita linha vazia no final */
+    gap: 15px; /* espaçamento uniforme */
+    padding: 10px;
+}
+
+/* Cards compactos, tamanho fixo para não criar espaço extra */
+.card {
+    flex: 0 0 120px; /* tamanho fixo compacto, não estica */
+    margin: 0;
+}
+
+/* Garante que o conteúdo role até o final sem corte */
+.coluna > div {
+    min-height: 100%;
+}
+/* Scroll das colunas só quando precisar - escondido quando couber tudo */
+.coluna {
+    overflow-y: auto; /* scroll só quando necessário */
+    height: calc(100vh - 140px);
+}
+
+/* Esconde completamente a barra de scroll (todas as colunas) */
+.coluna {
+    scrollbar-width: none; /* Firefox - esconde barra */
+    -ms-overflow-style: none; /* IE/Edge - esconde barra */
+}
+
+.coluna::-webkit-scrollbar {
+    display: none; /* Chrome/Safari - esconde barra permanentemente */
+}
+
+/* Garante que a rolagem funcione mesmo sem barra visível */
+.coluna > div {
+    min-height: 100%;
+}
+
+/* Cabeçalhos das colunas por cima de TUDO */
+/* Fundo do modal com z-index baixo (para não cobrir os cabeçalhos) */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    z-index: 1001; /* baixo para o fundo não cobrir os cabeçalhos */
+    pointer-events: none; /* permite clicar através do fundo */
+}
+
+/* Conteúdo do modal por cima do fundo, mas abaixo dos cabeçalhos */
+.modal-content {
+    pointer-events: auto; /* só o conteúdo é clicável */
+    z-index: 401;
+    background: #fff;
+    color: #000;
+    padding: 25px;
+    border-radius: 15px;
+    width: 85%;
+    max-width: 620px;
+    max-height: 92vh;
+    overflow-y: auto;
+}
+
+/* Cabeçalhos das colunas por cima de TUDO */
+.coluna h2 {
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* altíssimo para ficar por cima do modal */
+    background: rgba(255, 136, 0, 0);
+    margin: 0;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+
+}
+
+/* Adição mínima para o contador */
+.contador {
+    font-size: 0.68em;
+    color: #444;
+    background: rgba(255,255,255,0.8);
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 10px;
+    font-weight: normal;
+    vertical-align: middle;
+}
+
+/* Animação de piscar suave para cards com observação */
+@keyframes piscarObservacao {
+    0%   { box-shadow: 0 0 12px rgb(128, 0, 0); }
+    50%  { box-shadow: 0 0 35px rgba(121, 0, 0, 0.9); }
+    100% { box-shadow: 0 0 15px rgb(156, 0, 0); }
+}
+
+.card.tem-observacao {
+    animation: piscarObservacao 1.0s infinite ease-in-out;
+    border: 4px solid #ffffff;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+}
+
+/* Suaviza o aparecimento/desaparecimento dos cards na busca */
+.card[style*="display: none"] {
+    opacity: 0;
+    transform: scale(0.92);
+}
+
+/* === ESTILO PARA BOTÕES NOVOS NO CABEÇALHO === */
+#btnReentrar, #btnExportarAtual {
+    background: rgb(255, 255, 255);
+    color: #353d61;
+    border: 3px solid #353d61;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#btnReentrar:hover, #btnExportarAtual:hover {
+    background: #f0f8ff;
+}
+
+/* === ESTILO PARA CARDS REENTRADOS (DESTAQUE VISUAL) === */
+.card.reentrado {
+    border: 4px solid #dc3545 !important;
+    box-shadow: 0 4px 20px rgba(220, 53, 69, 0.5) !important;
+    position: relative;
+}
+
+.card.reentrado::before {
+    content: "↺ REENTRADA";
+    position: absolute;
+    top: -14px;
+    left: 12px;
+    background: #000000;
+    color: rgb(255, 136, 0);
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 4px;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* === ESTILO PARA CAMPO MOTIVO REENTRADA === */
+#motivoReentrada {
+    background: #fff3cd !important;
+    border: 2px solid #ffc107 !important;
+    margin-top: 12px !important;
+}
+
+#avisoMotivoReentrada {
+    color: #dc3545;
+    font-weight: bold;
+    margin-top: 6px;
+    font-size: 14px;
+    display: none;
+}
+
+#reentradaMotivoContainer label {
+    color: #dc3545;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+<header>
+    <img src="logo.png.png" alt="Logo SABA" style="height: 100px; margin-bottom: -25px;">
+    <div id="relogio"></div>
+    <div id="contadorCards" style="font-size:14px; font-weight:bold; color:#353d61; margin-top:6px;">
+    Total de cards: <span id="totalCards">0</span>
+    </div>    
+    <div class="header-buttons-left">
+        <button id="btnCadastro" onclick="abrirCadastro()">Cadastrar</button>
+        <button id="btnCancelar" onclick="senhaCancelar()">Cancelar</button>
+        <button id="btnReentrar" onclick="abrirReentradaComSenha()">Reentrar OS/PV</button>
+        <button id="btnExportarAtual" onclick="exportarPedidosAtuaisCSV()">Exportar Atual (Excel)</button>
+    </div>
+    <div class="header-buttons-right">
+        <!-- PESQUISA MINIMALISTA AO LADO DO HISTÓRICO -->
+        <input type="text" id="pesquisaOSPV" placeholder="Buscar OS/PV ou nome...">
+        <button id="btnPesquisar" onclick="pesquisarPedido()">🔍</button>
+        <button id="btnHistorico" onclick="abrirHistorico()">Histórico</button>
+    </div>
+</header>
+<div class="container">
+    <div class="coluna">
+        <h2>🖨️ Impressão<span class="contador" data-status="impressao">(0)</span></h2>
+        <div id="impressao"></div>
+    </div>
+    <div class="coluna" id="em_separacao_container">
+        <h2>📦 Em Separação<span class="contador" data-status="em_separacao">(0)</span></h2>
+        <div id="em_separacao" style="display: flex; flex-wrap: wrap;"></div>
+    </div>
+    <div class="coluna" id="aguardando_retirada_container">
+        <h2>📫 Aguardando Retirada<span class="contador" data-status="aguardando_retirada">(0)</span></h2>
+        <div id="aguardando_retirada" style="display: flex; flex-wrap: wrap;"></div>
+    </div>
+    <div class="coluna">
+        <h2>✅ Finalizados<span class="contador" data-status="finalizados">(0)</span></h2>
+        <div id="finalizados"></div>
+    </div>
+</div>
+<!-- Modal -->
+<div id="modal" class="modal" onclick="fecharModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h3 id="modalTitulo"></h3>
+        <p id="modalInfo"></p>
+        <div id="campoSenha" class="hidden">
+            <label>Digite a senha:</label>
+            <input type="password" id="inputSenha" oninput="validarSenha()">
+            <button id="btnConfirmarSenha" disabled onclick="confirmarSenha()">Confirmar</button>
+            <button onclick="fecharModal()" style="background:#ccc; margin-top:5px;">Cancelar</button>
+        </div>
+        <div id="campoCadastro" class="hidden">
+            <label>Tipo:</label>
+            <select id="tipo">
+                <option value="OS">OS</option>
+                <option value="PV">PV</option>
+            </select>
+            <label>Número:</label>
+            <input type="text" id="numero" inputmode="numeric" pattern="[0-9]*">
+            <label>Nome Técnico / Cliente:</label>
+            <input type="text" id="nome">
+            <label>Vendedor:</label>
+            <input type="text" id="vendedor">
+            <label>Data de Instalação:</label>
+            <input type="date" id="dataInstalacao">
+            <select id="periodoInstalacao">
+                <option value="">Selecione o período</option>
+                <option value="Manhã">Manhã</option>
+                <option value="Tarde">Tarde</option>
+            </select>
+            <label>Observação:</label>
+            <textarea id="observacao" rows="3" placeholder="Detalhes importantes, problemas informados, etc..."></textarea>
+            <button onclick="cadastrar()">Salvar</button>
+        </div>
+        <div id="campoCancelar" class="hidden">
+            <label>Digite o número da OS/PV:</label>
+            <input type="text" id="numeroCancelar" inputmode="numeric" pattern="[0-9]*" oninput="validarCancelar()">
+            <button id="btnConfirmarCancelar" disabled onclick="cancelarPedido()">Remover</button>
+        </div>
+        <div id="campoImpressao" class="hidden">
+            <label>Nome de quem imprimiu:</label>
+            <input type="text" id="inputImpressor" oninput="validarImpressao()">
+            <button id="btnImpressao" disabled onclick="confirmarImpressao()">Enviar para Em Separação</button>
+        </div>
+        <div id="campoSeparador" class="hidden">
+            <label>Nome do Separador:</label>
+            <input type="text" id="inputSeparador" oninput="validarSeparador()">
+            <button id="btnSeparador" disabled onclick="confirmarSeparacao()">Enviar para Aguardando Retirada</button>
+        </div>
+        <div id="campoRetirada" class="hidden">
+            <label>Técnico/Responsável:</label>
+            <input type="text" id="inputTecnico" oninput="validarRetirada()">
+            <label>Conferente:</label>
+            <input type="text" id="inputConferente" oninput="validarRetirada()">
+            <button id="btnRetirada" disabled onclick="finalizar()">Finalizar</button>
+        </div>
+        <div id="campoEditar" class="hidden">
+            <label>Tipo:</label>
+            <select id="editTipo">
+                <option value="OS">OS</option>
+                <option value="PV">PV</option>
+            </select>
+            <label>Número:</label>
+            <input type="text" id="editNumero" inputmode="numeric" pattern="[0-9]*">
+            <label>Nome Técnico / Cliente:</label>
+            <input type="text" id="editNome">
+            <label>Vendedor:</label>
+            <input type="text" id="editVendedor">
+            <label>Data de Instalação:</label>
+            <input type="date" id="editDataInstalacao">
+            <select id="editPeriodoInstalacao">
+                <option value="">Selecione o período</option>
+                <option value="Manhã">Manhã</option>
+                <option value="Tarde">Tarde</option>
+            </select>
+            <label>Observação:</label>
+            <textarea id="editObservacao" rows="3" placeholder="Detalhes importantes, problemas informados, etc..."></textarea>
+
+            <!-- CAMPO OBRIGATÓRIO PARA MOTIVO DA REENTRADA -->
+            <div id="reentradaMotivoContainer" style="display:none; margin-top:16px; padding-top:16px; border-top:2px solid #ffc107;">
+                <label>Motivo da Reentrada (obrigatório):</label>
+                <textarea id="motivoReentrada" rows="3" placeholder="Ex: Cliente pediu alteração / Erro na separação / ..." required></textarea>
+                <div id="avisoMotivoReentrada">⚠️ O motivo da reentrada é obrigatório!</div>
+            </div>
+
+            <button onclick="salvarEdicao()">Salvar Alterações</button>
+            <button onclick="fecharModal()" style="background:#ccc; margin-top:5px;">Cancelar</button>
+        </div>
+        <div id="campoHistorico" class="hidden">
+            <h4>Histórico de Finalizados</h4>
+            <button onclick="exportarHistoricoCSV()" style="background:#006400; color:#fff; margin:10px 0;">Exportar Histórico para Excel (CSV)</button>
+            <button id="btnDadosProducao" onclick="alternarGraficoProducao()" style="background:#353d61; color:#fff; margin:10px 0;">Dados de Produ��o</button>
+            <input type="text" id="buscaHistorico" placeholder="Pesquisar por número, nome, tipo ou vendedor..." style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc; font-size:16px;">
+            <div id="graficoProducaoContainer" style="display:none; margin:10px 0; padding:10px; border:2px solid #353d61; border-radius:10px; background:#f7f7f7; color:#000;"></div>
+            <div id="listaHistorico"></div>
+            <button onclick="fecharModal()">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<!-- IMPORTANTÍSSIMO: socket.io ANTES do script inline, para não quebrar socket.emit -->
+<script src="/socket.io/socket.io.js"></script>
+<script src="client.js"></script>
+
+<script>
+/* ------------------------- Variável global para filtro persistente ------------------------- */
+let termoBuscaAtivo = "";
+
+/* Variáveis para controle de reentrada */
+let isReentradaMode = false;
+let pedidoReentradaAtual = null;
+
+/* NOVO: guarda de onde veio o pedido reentrado (pedidos/historico) */
+let reentradaOrigem = null;
+
+/* NOVO: emissor seguro (não quebra se socket não existir) */
+function emitSocket(evento, payload) {
+    try {
+        if (window.socket && typeof window.socket.emit === "function") {
+            window.socket.emit(evento, payload);
+        }
+    } catch (e) {
+        // Silencia para não quebrar o fluxo local
+        console.warn("Falha ao emitir socket:", evento, e);
+    }
+}
+
+/* ------------------------- Relógio ------------------------- */
+function atualizarRelogio() {
+    const agora = new Date();
+    const h = agora.toLocaleTimeString("pt-BR");
+    const d = agora.toLocaleDateString("pt-BR");
+    document.getElementById("relogio").innerHTML = `${d} — ${h}`;
+}
+setInterval(atualizarRelogio,1000);
+atualizarRelogio();
+/* ------------------------- Banco local ------------------------- */
+let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+let historicoFinalizados = JSON.parse(localStorage.getItem("historicoFinalizados")) || [];
+function salvarBanco() {
+    localStorage.setItem("pedidos", JSON.stringify(pedidos));
+    localStorage.setItem("historicoFinalizados", JSON.stringify(historicoFinalizados));
+}
+
+/* ------------------------- Contadores ------------------------- */
+function atualizarContadores() {
+    const contagem = {
+        impressao: 0,
+        em_separacao: 0,
+        aguardando_retirada: 0,
+        finalizados: 0
+    };
+
+    pedidos.forEach(p => {
+        if (contagem[p.status] !== undefined) {
+            contagem[p.status]++;
+        }
+    });
+
+    document.querySelectorAll('.contador').forEach(el => {
+        const status = el.dataset.status;
+        if (status && contagem[status] !== undefined) {
+            el.textContent = `(${contagem[status]})`;
+        }
+    });
+
+    // Total no cabeçalho
+    document.getElementById("totalCards").textContent = pedidos.length;
+}
+
+/* ------------------------- PESQUISA DE OS/PV - FILTRO PERSISTENTE ------------------------- */
+function pesquisarPedido() {
+    const input = document.getElementById("pesquisaOSPV");
+    termoBuscaAtivo = input.value.trim().toLowerCase();
+
+    // Se apagou tudo → limpa o filtro e mostra todos
+    if (!termoBuscaAtivo) {
+        termoBuscaAtivo = "";
+    }
+
+    renderizar();  // sempre renderiza após qualquer mudança na busca
+}
+
+/* ------------------------- Apenas números ------------------------- */
+function apenasNumeros(e) {
+    const permitidas = ['0','1','2','3','4','5','6','7','8','9','Backspace','Delete','Tab','ArrowLeft','ArrowRight'];
+    if (permitidas.includes(e.key) || (e.ctrlKey && ['v','c','a'].includes(e.key.toLowerCase()))) {
+        return;
+    }
+    e.preventDefault();
+}
+
+function limparNaoNumeros(el) {
+    el.value = el.value.replace(/\D/g, '');
+}
+
+/* ------------------------- Renderizar - RESPEITA FILTRO DE BUSCA ------------------------- */
+function renderizar() {
+    const colunas = {
+        impressao: document.getElementById("impressao"),
+        em_separacao: document.getElementById("em_separacao"),
+        aguardando_retirada: document.getElementById("aguardando_retirada"),
+        finalizados: document.getElementById("finalizados")
+    };
+
+    for (const c in colunas) colunas[c].innerHTML = "";
+
+    pedidos.forEach(p => {
+        // Só cria o card se passar no filtro de busca (ou se não houver busca ativa)
+        const numeroSafe = (p.numero || "").toString().toLowerCase();
+        const nomeSafe = (p.nome || "").toString().toLowerCase();
+        const vendedorSafe = (p.vendedor || "").toString().toLowerCase();
+        const observacaoSafe = (p.observacao || "").toString().toLowerCase();
+
+        if (termoBuscaAtivo &&
+            !numeroSafe.includes(termoBuscaAtivo) &&
+            !nomeSafe.includes(termoBuscaAtivo) &&
+            !vendedorSafe.includes(termoBuscaAtivo) &&
+            !observacaoSafe.includes(termoBuscaAtivo)) {
+            return; // pula este pedido
+        }
+
+        let div = document.createElement("div");
+        let classeCor = "";
+        if (p.status === "impressao") {
+            classeCor = "impressao-card";
+        } else if (p.status === "em_separacao") {
+            classeCor = "separacao-card";
+        } else if (p.status === "aguardando_retirada") {
+            classeCor = p.tipo === "PV" ? "aguardando-pv" : "aguardando-os";
+        } else if (p.status === "finalizados") {
+            classeCor = "finalizado-card";
+        }
+        div.className = `card ${classeCor} ${p.reentrado ? 'reentrado' : ''}`;
+
+        // Adiciona classe de piscar se tiver observação
+        if (p.observacao && p.observacao.trim() !== "") {
+            div.classList.add("tem-observacao");
+        }
+
+        let dataHora = new Date(p.historico[p.historico.length-1]?.hora || Date.now()).toLocaleString("pt-BR");
+
+        let linhaInstalacao = "";
+        if (p.dataInstalacao) {
+            linhaInstalacao = `<div style="font-size:13px; color:#000; margin:4px 0; line-height:1.2;">
+                <strong>Instalação:</strong><br>${p.dataInstalacao}
+            </div>`;
+        }
+
+        // Mostra observação resumida no card
+        let observacaoResumida = "";
+        if (p.observacao && p.observacao.trim() !== "") {
+            let textoCurto = p.observacao.length > 60 
+                ? p.observacao.substring(0, 57) + "..." 
+                : p.observacao;
+            observacaoResumida = `
+                <div style="font-size:12px; margin:6px 0; padding:4px; background:rgba(0,0,0,0.15); border-radius:6px; color:#fff; line-height:1.3;">
+                    <strong>Obs:</strong> ${textoCurto}
+                </div>`;
+        }
+
+        div.innerHTML = `
+            <div style="font-size:18px; margin-bottom:6px;">
+                ${emojiStatus(p.status)} ${p.tipo} ${p.numero}
+            </div>
+            <div style="font-size:22px; margin:10px 0;">
+                ${p.nome}
+            </div>
+            ${linhaInstalacao}
+            ${observacaoResumida}
+            <div style="font-size:14px; opacity:0.9;">
+                ${dataHora}
+            </div>
+        `;
+
+        if(p.status === "finalizados") div.onclick = () => abrirPedidoFinalizado(p.numero);
+        else div.onclick = () => abrirPedido(p.numero);
+        colunas[p.status].appendChild(div);
+    });
+
+    atualizarContadores();
+}
+function emojiStatus(status) {
+    return {
+        impressao: "🖨️",
+        em_separacao: "📦",
+        aguardando_retirada: "📫",
+        finalizados: "✅"
+    }[status];
+}
+
+/* ------------------------- REENTRADA COM SENHA ------------------------- */
+function abrirReentradaComSenha() {
+    const senhaCorreta = "2025";
+
+    abrirSenhaModal("Reentrar OS/PV", (senhaDigitada) => {
+        if (senhaDigitada !== senhaCorreta) {
+            if (senhaDigitada) alert("Senha incorreta!");
+            return false;
+        }
+
+        document.getElementById("campoSenha").classList.add("hidden");
+
+        const numero = (prompt("Digite o n�mero da OS ou PV que deseja reentrar:") || "").trim();
+
+        if (!numero) {
+            alert("N�mero inv�lido.");
+            fecharModal();
+            return true;
+        }
+
+        // Primeiro procura nos pedidos ativos
+        let pedido = pedidos.find(p => p.numero === numero);
+
+        // Se n�o achar, procura no hist�rico
+        if (!pedido) {
+            pedido = historicoFinalizados.find(p => p.numero === numero);
+            if (pedido) {
+                reentradaOrigem = "historico";
+                // clona para n�o mexer direto no hist�rico antes de salvar
+                pedido = JSON.parse(JSON.stringify(pedido));
+            }
+        } else {
+            reentradaOrigem = "pedidos";
+        }
+
+        if (!pedido) {
+            alert("Pedido n�o encontrado em nenhum status (nem nos finalizados).");
+            fecharModal();
+            return true;
+        }
+
+        pedidoReentradaAtual = pedido;
+        isReentradaMode = true;
+
+        abrirModal();
+        document.getElementById("modalTitulo").innerText = "Reentrar Pedido";
+        document.getElementById("modalInfo").style.display = "none";
+        document.getElementById("campoEditar").classList.remove("hidden");
+        document.getElementById("reentradaMotivoContainer").style.display = "block";
+
+        // Preenche campos com dados do pedido
+        document.getElementById("editTipo").value = pedido.tipo;
+        document.getElementById("editNumero").value = pedido.numero;
+        document.getElementById("editNome").value = pedido.nome;
+        document.getElementById("editVendedor").value = pedido.vendedor || "";
+        document.getElementById("editObservacao").value = pedido.observacao || "";
+
+        if (pedido.dataInstalacao) {
+            const partes = pedido.dataInstalacao.split(" - ");
+            if (partes.length === 2) {
+                const [dia, mes, ano] = partes[0].split("/");
+                document.getElementById("editDataInstalacao").value = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+                document.getElementById("editPeriodoInstalacao").value = partes[1];
+            }
+        } else {
+            document.getElementById("editDataInstalacao").value = "";
+            document.getElementById("editPeriodoInstalacao").value = "";
+        }
+
+        document.getElementById("motivoReentrada").value = "";
+        document.getElementById("avisoMotivoReentrada").style.display = "none";
+        return true;
+    });
+}
+
+/* ------------------------- EXPORTAR PEDIDOS ATUAIS (COM QUEM FEZ CADA ETAPA) ------------------------- */
+function exportarPedidosAtuaisCSV() {
+    if (pedidos.length === 0) {
+        alert("Não há pedidos para exportar.");
+        return;
+    }
+
+    let csv = "Status;Tipo;Número;Cliente;Vendedor;Data Instalação;Observação;";
+    csv += "Quem Imprimiu;Hora Impressão;";
+    csv += "Quem Separou;Hora Separação;";
+    csv += "Quem Retirou;Quem Conferiu;Hora Retirada;Última Ação;Data/Hora Última Ação\n";
+
+    pedidos.forEach(p => {
+        let quemImprimiu = "", horaImpressao = "";
+        let quemSeparou = "", horaSeparacao = "";
+        let quemRetirou = "", quemConferiu = "", horaRetirada = "";
+
+        p.historico.forEach(h => {
+            const dt = new Date(h.hora).toLocaleString("pt-BR");
+            if (h.acao.includes("Impresso por")) {
+                quemImprimiu = h.acao.replace("Impresso por ", "");
+                horaImpressao = dt;
+            } else if (h.acao.includes("Separado por")) {
+                quemSeparou = h.acao.replace("Separado por ", "");
+                horaSeparacao = dt;
+            } else if (h.acao.includes("Retirado por")) {
+                const partes = h.acao.split(", conferido por ");
+                quemRetirou = partes[0].replace("Retirado por ", "");
+                quemConferiu = partes[1] || "";
+                horaRetirada = dt;
+            }
+        });
+
+        const ultimaAcao = p.historico?.[p.historico.length - 1] || { acao: "Sem histórico", hora: 0 };
+        const dataUltima = new Date(ultimaAcao.hora).toLocaleString("pt-BR");
+
+        let statusFormatado = p.status === "impressao" ? "Impressão" :
+                              p.status === "em_separacao" ? "Em Separação" :
+                              p.status === "aguardando_retirada" ? "Aguardando Retirada" :
+                              p.status === "finalizados" ? "Finalizados" : p.status;
+
+        csv += `"${statusFormatado}";"${p.tipo}";"${p.numero}";"${(p.nome || "").replace(/"/g,'""')}";"${(p.vendedor || "").replace(/"/g,'""')}";"${(p.dataInstalacao || "")}";"${(p.observacao || "").replace(/"/g,'""').replace(/\n/g, ' | ')}";`;
+        csv += `"${quemImprimiu}";"${horaImpressao}";"${quemSeparou}";"${horaSeparacao}";"${quemRetirou}";"${quemConferiu}";"${horaRetirada}";"${ultimaAcao.acao.replace(/"/g,'""')}";"${dataUltima}"\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `pedidos_saba_atual_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+/* ------------------------- Modal ------------------------- */
+function abrirModal() { document.getElementById("modal").style.visibility = "visible"; }
+function fecharModal() {
+    document.getElementById("modal").style.visibility = "hidden";
+    document.querySelectorAll(".modal-content > div").forEach(d => d.classList.add("hidden"));
+    document.querySelectorAll(".modal-content input, .modal-content textarea, .modal-content select").forEach(el => el.value = "");
+    isReentradaMode = false;
+    pedidoReentradaAtual = null;
+    reentradaOrigem = null;
+    document.getElementById("reentradaMotivoContainer").style.display = "none";
+    document.getElementById("avisoMotivoReentrada").style.display = "none";
+}
+/* ------------------------- Senha (modal bonito) ------------------------- */
+let senhaPendenteCallback = null;
+function abrirSenhaModal(titulo, onOk) {
+    abrirModal();
+    document.getElementById("modalTitulo").innerText = titulo;
+    document.getElementById("modalInfo").textContent = "";
+    document.getElementById("modalInfo").style.display = "block";
+    document.getElementById("campoSenha").classList.remove("hidden");
+    senhaPendenteCallback = onOk;
+    document.getElementById("btnConfirmarSenha").disabled = true;
+    const input = document.getElementById("inputSenha");
+    input.value = "";
+    input.focus();
+}
+function validarSenha() {
+    document.getElementById("btnConfirmarSenha").disabled = document.getElementById("inputSenha").value.trim() === "";
+}
+function confirmarSenha() {
+    const senha = document.getElementById("inputSenha").value.trim();
+    const cb = senhaPendenteCallback;
+    senhaPendenteCallback = null;
+    if (!cb) return;
+    const ok = cb(senha) === true;
+    if (ok) {
+        document.getElementById("campoSenha").classList.add("hidden");
+    }
+}
+
+/* ------------------------- Cadastro ------------------------- */
+function abrirCadastro() {
+    abrirModal();
+    document.getElementById("modalTitulo").innerText = "Novo Cadastro";
+    document.getElementById("campoCadastro").classList.remove("hidden");
+
+    document.getElementById("modalInfo").textContent = "";
+    document.getElementById("modalInfo").style.display = "block";
+}
+function cadastrar() {
+    let tipo = document.getElementById("tipo").value;
+    let numero = document.getElementById("numero").value.trim();
+    let nome = document.getElementById("nome").value.trim();
+    let vendedor = document.getElementById("vendedor").value.trim();
+    let dataInstalacaoInput = document.getElementById("dataInstalacao").value;
+    let periodoInstalacao = document.getElementById("periodoInstalacao").value;
+    let observacao = document.getElementById("observacao").value.trim();
+
+    if(!numero||!nome) return alert("Preencha todos os campos!");
+
+    let dataInstalacao = "";
+    if (dataInstalacaoInput && periodoInstalacao) {
+        const [ano, mes, dia] = dataInstalacaoInput.split("-");
+        dataInstalacao = `${dia}/${mes}/${ano} - ${periodoInstalacao}`;
+    }
+
+    pedidos.push({tipo,numero,nome,vendedor,dataInstalacao,observacao,status:"impressao",historico:[{acao:"Criado",hora:new Date().getTime()}]});
+    salvarBanco(); 
+    termoBuscaAtivo = ""; // limpa busca após cadastro
+    document.getElementById("pesquisaOSPV").value = "";
+    renderizar(); fecharModal();
+    atualizarContadores();
+
+    emitSocket("adicionarPedido", { tipo, numero, nome, vendedor, dataInstalacao, observacao });
+}
+/* ------------------------- Cancelamento ------------------------- */
+function senhaCancelar() {
+    const senhaCorreta = "2025";
+
+    abrirSenhaModal("Cancelar Pedido", (senhaDigitada) => {
+        if (senhaDigitada === senhaCorreta) {
+            document.getElementById("campoSenha").classList.add("hidden");
+            abrirModal();
+            document.getElementById("modalTitulo").innerText = "Cancelar Pedido";
+            document.getElementById("campoCancelar").classList.remove("hidden");
+            document.getElementById("numeroCancelar").focus();
+            return true;
+        } else if (senhaDigitada) {
+            alert("Senha incorreta! Acesso negado.");
+        }
+        return false;
+    });
+}
+function validarCancelar(){ document.getElementById("btnConfirmarCancelar").disabled = document.getElementById("numeroCancelar").value.trim()===""; }
+function cancelarPedido() {
+    let n = document.getElementById("numeroCancelar").value.trim();
+    pedidos = pedidos.filter(p => p.numero !== n);
+    salvarBanco(); 
+    termoBuscaAtivo = ""; // limpa busca após cancelar
+    document.getElementById("pesquisaOSPV").value = "";
+    renderizar(); fecharModal();
+    atualizarContadores();
+
+    emitSocket("cancelarPedido", n);
+}
+/* ------------------------- Workflow ------------------------- */
+let pedidoAtual = null;
+function abrirPedido(numero) {
+    pedidoAtual = pedidos.find(p=>p.numero===numero);
+    abrirModal();
+    document.getElementById("modalTitulo").innerText=`${pedidoAtual.tipo} ${pedidoAtual.numero}`;
+    document.getElementById("modalInfo").innerHTML = `
+        Cliente/Técnico: <strong>${pedidoAtual.nome}</strong><br>
+        Vendedor: <strong>${pedidoAtual.vendedor || "Não informado"}</strong><br>
+        ${pedidoAtual.dataInstalacao ? 'Instalação: <strong>' + pedidoAtual.dataInstalacao + '</strong><br>' : ''}
+        ${pedidoAtual.observacao ? '<br><strong>Observação:</strong><br><div style="white-space: pre-wrap; background:#f8f8f8; padding:10px; border-radius:6px; margin-top:8px; color:#333;">' + pedidoAtual.observacao + '</div>' : ''}
+        <br>
+        <button onclick="mostrarEdicao()" style="background:#ff8c00; color:black; padding:10px; border:none; border-radius:6px; font-weight:bold;">✏️ Editar OS/PV</button>
+    `;
+
+    document.getElementById("campoImpressao").classList.add("hidden");
+    document.getElementById("campoSeparador").classList.add("hidden");
+    document.getElementById("campoRetirada").classList.add("hidden");
+    document.getElementById("campoEditar").classList.add("hidden");
+
+    if (pedidoAtual.status === "impressao") {
+        document.getElementById("campoImpressao").classList.remove("hidden");
+    } else if (pedidoAtual.status === "em_separacao") {
+        document.getElementById("campoSeparador").classList.remove("hidden");
+    } else if (pedidoAtual.status === "aguardando_retirada") {
+        document.getElementById("campoRetirada").classList.remove("hidden");
+    }
+}
+/* Impressão */
+function validarImpressao(){ document.getElementById("btnImpressao").disabled=document.getElementById("inputImpressor").value.trim()===""; }
+function confirmarImpressao(){
+    let nome=document.getElementById("inputImpressor").value.trim();
+    pedidoAtual.status="em_separacao";
+    pedidoAtual.historico.push({acao:`Impresso por ${nome}`,hora:new Date().getTime()});
+    salvarBanco(); renderizar(); fecharModal();
+    atualizarContadores();
+
+    emitSocket("moverPedido", {
+        numero: pedidoAtual.numero,
+        novoStatus: "em_separacao",
+        historicoAtualizado: pedidoAtual.historico
+    });
+}
+/* Separação */
+function validarSeparador(){ document.getElementById("btnSeparador").disabled=document.getElementById("inputSeparador").value.trim()===""; }
+function confirmarSeparacao(){
+    let nome=document.getElementById("inputSeparador").value.trim();
+    pedidoAtual.status="aguardando_retirada";
+    pedidoAtual.historico.push({acao:`Separado por ${nome}`,hora:new Date().getTime()});
+    salvarBanco(); renderizar(); fecharModal();
+    atualizarContadores();
+
+    emitSocket("moverPedido", {
+        numero: pedidoAtual.numero,
+        novoStatus: "aguardando_retirada",
+        historicoAtualizado: pedidoAtual.historico
+    });
+}
+/* Retirada */
+function validarRetirada(){
+    let t=document.getElementById("inputTecnico").value.trim();
+    let c=document.getElementById("inputConferente").value.trim();
+    document.getElementById("btnRetirada").disabled=!(t&&c);
+}
+function finalizar(){
+    let t = document.getElementById("inputTecnico").value.trim();
+    let c = document.getElementById("inputConferente").value.trim();
+
+    pedidoAtual.status = "finalizados";
+    pedidoAtual.finalizadoEm = Date.now(); 
+
+    pedidoAtual.historico.push({
+        acao: `Retirado por ${t}, conferido por ${c}`,
+        hora: pedidoAtual.finalizadoEm
+    });
+
+    salvarBanco();
+    renderizar();
+    fecharModal();
+    atualizarContadores();
+
+    emitSocket("moverPedido", {
+        numero: pedidoAtual.numero,
+        novoStatus: "finalizados",
+        historicoAtualizado: pedidoAtual.historico
+    });
+}
+
+/* ------------------------- Edi��o / Reentrada ------------------------- */
+function mostrarEdicao() {
+    const senhaCorreta = "2025";
+
+    // esconde os bot�es de fluxo antes de pedir a senha
+    document.getElementById("campoImpressao").classList.add("hidden");
+    document.getElementById("campoSeparador").classList.add("hidden");
+    document.getElementById("campoRetirada").classList.add("hidden");
+
+    abrirSenhaModal("Editar OS/PV", (senha) => {
+        if (senha === senhaCorreta) {
+            document.getElementById("campoSenha").classList.add("hidden");
+            document.getElementById("editTipo").value = pedidoAtual.tipo;
+            document.getElementById("editNumero").value = pedidoAtual.numero;
+            document.getElementById("editNome").value = pedidoAtual.nome;
+            document.getElementById("editVendedor").value = pedidoAtual.vendedor || "";
+
+            document.getElementById("editObservacao").value = pedidoAtual.observacao || "";
+
+            if (pedidoAtual.dataInstalacao) {
+                const partes = pedidoAtual.dataInstalacao.split(" - ");
+                if (partes.length === 2) {
+                    const [dia, mes, ano] = partes[0].split("/");
+                    document.getElementById("editDataInstalacao").value = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+                    document.getElementById("editPeriodoInstalacao").value = partes[1];
+                }
+            } else {
+                document.getElementById("editDataInstalacao").value = "";
+                document.getElementById("editPeriodoInstalacao").value = "";
+            }
+
+            document.getElementById("reentradaMotivoContainer").style.display = "none";
+            document.getElementById("avisoMotivoReentrada").style.display = "none";
+
+            document.getElementById("modalInfo").style.display = "none";
+            document.getElementById("campoEditar").classList.remove("hidden");
+            return true;
+        } else if (senha) {
+            alert("Senha incorreta!");
+        }
+        return false;
+    });
+}
+
+function salvarEdicao() {
+    let pedido = isReentradaMode ? pedidoReentradaAtual : pedidoAtual;
+    if (!pedido) return;
+
+    // NOVO: pega o índice antes de alterar número (corrige bug de "editar tudo e não salvar")
+    // - se estiver editando um pedido que está no array "pedidos", pega o índice pelo número atual
+    // - se for reentrada do histórico, o índice aqui pode ser -1 (e a gente trata mais abaixo)
+    const indiceAntes = pedidos.findIndex(p => p.numero === pedido.numero);
+
+    let novoTipo = document.getElementById("editTipo").value;
+    let novoNumero = document.getElementById("editNumero").value.trim();
+    let novoNome = document.getElementById("editNome").value.trim();
+    let novoVendedor = document.getElementById("editVendedor").value.trim();
+    let novaObservacao = document.getElementById("editObservacao").value.trim();
+    let dataInput = document.getElementById("editDataInstalacao").value;
+    let periodo = document.getElementById("editPeriodoInstalacao").value;
+
+    if (!novoNumero || !novoNome) {
+        return alert("Número e Nome são obrigatórios!");
+    }
+
+    let motivoReentrada = "";
+    if (isReentradaMode) {
+        motivoReentrada = document.getElementById("motivoReentrada").value.trim();
+        if (!motivoReentrada) {
+            document.getElementById("avisoMotivoReentrada").style.display = "block";
+            document.getElementById("motivoReentrada").focus();
+            return;
+        }
+    }
+
+    const numeroAntigo = pedido.numero;
+
+    // Impede duplicidade de número (verifica no array pedidos)
+    if (novoNumero !== numeroAntigo && pedidos.some(p => p.numero === novoNumero)) {
+        return alert("Já existe um pedido com este número!");
+    }
+
+    let novaDataInstalacao = "";
+    if (dataInput && periodo) {
+        const [ano, mes, dia] = dataInput.split("-");
+        if (ano && mes && dia && ano.length === 4) {
+            novaDataInstalacao = `${dia.padStart(2,'0')}/${mes.padStart(2,'0')}/${ano} - ${periodo}`;
+        } else {
+            alert("Data de instalação inválida!");
+            return;
+        }
+    }
+
+    pedido.tipo = novoTipo;
+    pedido.numero = novoNumero;
+    pedido.nome = novoNome;
+    pedido.vendedor = novoVendedor;
+    pedido.observacao = novaObservacao;
+    pedido.dataInstalacao = novaDataInstalacao;
+
+    if (isReentradaMode) {
+        const dataReentrada = new Date().toLocaleString("pt-BR");
+        const obsAntiga = pedido.observacao || "";
+        pedido.observacao = obsAntiga 
+            ? `${obsAntiga}\n\n↺ Reentrado em ${dataReentrada}: ${motivoReentrada}`
+            : `↺ Reentrado em ${dataReentrada}: ${motivoReentrada}`;
+
+        // VOLTA PARA IMPRESSÃO
+        pedido.status = "impressao";
+        pedido.finalizadoEm = null;
+
+        pedido.historico.push({
+            acao: `Reentrado para IMPRESSAO - Motivo: ${motivoReentrada}`,
+            hora: Date.now()
+        });
+
+        pedido.reentrado = true;
+
+        // NOVO: se veio do histórico, remove do histórico e garante que entra em "pedidos"
+        if (reentradaOrigem === "historico") {
+            historicoFinalizados = historicoFinalizados.filter(p => p.numero !== numeroAntigo);
+            pedidos.push(JSON.parse(JSON.stringify(pedido)));
+        } else {
+            // se veio dos pedidos, garante atualização no array certo
+            if (indiceAntes !== -1) {
+                pedidos[indiceAntes] = JSON.parse(JSON.stringify(pedido));
+            }
+        }
+
+    } else {
+        pedido.historico.push({acao:"Editado (dados alterados)",hora:new Date().getTime()});
+
+        // NOVO: atualiza no array correto usando o índice ANTES da mudança
+        if (indiceAntes !== -1) {
+            pedidos[indiceAntes] = JSON.parse(JSON.stringify(pedido));
+        } else {
+            // fallback de segurança (caso extremo)
+            const idx2 = pedidos.findIndex(p => p.numero === numeroAntigo);
+            if (idx2 !== -1) pedidos[idx2] = JSON.parse(JSON.stringify(pedido));
+        }
+    }
+
+    salvarBanco();
+
+    // LIMPA FILTRO E RENDERIZA PARA GARANTIR QUE O CARD NÃO SUMA
+    termoBuscaAtivo = "";
+    document.getElementById("pesquisaOSPV").value = "";
+    renderizar();
+    fecharModal();
+    atualizarContadores();
+    pedido.updatedAt = Date.now();
+
+    emitSocket("editarPedido", {
+        antigoNumero: numeroAntigo,
+        atualizado: pedido
+    });
+
+    isReentradaMode = false;
+    pedidoReentradaAtual = null;
+    reentradaOrigem = null;
+}
+
+/* ------------------------- Histórico de Finalizados ------------------------- */
+/* ------------------------- Gr�ficos de Produ��o ------------------------- */
+function alternarGraficoProducao() {
+    const el = document.getElementById("graficoProducaoContainer");
+    if (!el) return;
+    if (el.style.display === "none" || el.style.display === "") {
+        el.style.display = "block";
+        renderizarGraficoProducao();
+    } else {
+        el.style.display = "none";
+    }
+}
+
+function renderizarGraficoProducao() {
+    const container = document.getElementById("graficoProducaoContainer");
+    if (!container) return;
+
+    const impressoMap = new Map();
+    const separadoMap = new Map();
+    const conferenteMap = new Map();
+
+    historicoFinalizados.forEach(p => {
+        (p.historico || []).forEach(h => {
+            if (!h.acao) return;
+            if (h.acao.includes("Impresso por ")) {
+                const nome = h.acao.replace("Impresso por ", "").trim();
+                if (nome) impressoMap.set(nome, (impressoMap.get(nome) || 0) + 1);
+            } else if (h.acao.includes("Separado por ")) {
+                const nome = h.acao.replace("Separado por ", "").trim();
+                if (nome) separadoMap.set(nome, (separadoMap.get(nome) || 0) + 1);
+            } else if (h.acao.includes("Retirado por ") && h.acao.includes(", conferido por ")) {
+                const partes = h.acao.split(", conferido por ");
+                const conferente = (partes[1] || "").trim();
+                if (conferente) conferenteMap.set(conferente, (conferenteMap.get(conferente) || 0) + 1);
+            }
+        });
+    });
+
+    const ordenar = (mapa) => Array.from(mapa.entries()).sort((a,b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+
+    const renderGrafico = (titulo, lista, cor) => {
+        const max = Math.max(1, ...lista.map(x => x[1]));
+        let html = `<div style=\"margin:12px 0;\">`;
+        html += `<div style=\"font-weight:bold; margin-bottom:6px;\">${titulo}</div>`;
+        html += `<div style=\"display:flex; align-items:flex-end; gap:10px; overflow-x:auto; padding:6px 2px; border:1px solid #ddd; border-radius:8px; background:#fff;\">`;
+        lista.forEach(([nome, qtd]) => {
+            const h = Math.round((qtd / max) * 160) + 20;
+            html += `
+                <div style=\"display:flex; flex-direction:column; align-items:center; min-width:70px;\">
+                    <div style=\"font-size:12px; margin-bottom:4px;\">${qtd}</div>
+                    <div style=\"width:40px; height:${h}px; background:${cor}; border-radius:6px;\"></div>
+                    <div style=\"font-size:11px; margin-top:6px; text-align:center;\">${nome}</div>
+                </div>
+            `;
+        });
+        html += `</div></div>`;
+        return html;
+    };
+
+    const listaImp = ordenar(impressoMap);
+    const listaSep = ordenar(separadoMap);
+    const listaConf = ordenar(conferenteMap);
+
+    container.innerHTML = `
+        ${renderGrafico("Impress�o", listaImp, "#ff8c00")}
+        ${renderGrafico("Separa��o", listaSep, "#ffc800")}
+        ${renderGrafico("Confer�ncia", listaConf, "#369aff")}
+    `;
+}
+function abrirHistorico(){
+    abrirModal(); 
+    document.getElementById("modalTitulo").innerText="Histórico de Finalizados";
+    document.getElementById("campoHistorico").classList.remove("hidden");
+
+        let div = document.getElementById("listaHistorico");
+    div.innerHTML = "";
+
+    if (historicoFinalizados.length === 0) {
+        div.innerHTML = "<p style='text-align:center; color:#666; padding:30px;'>Nenhum pedido no histórico ainda.</p>";
+        return;
+    }
+
+    const tabela = document.createElement("div");
+    tabela.className = "tabela-historico";
+
+    const cabecalho = document.createElement("div");
+    cabecalho.className = "tabela-cabecalho";
+    cabecalho.innerHTML = `<div>Tipo</div><div>Número</div><div>Cliente</div><div>Data Finalização</div>`;
+    tabela.appendChild(cabecalho);
+
+    historicoFinalizados.forEach(p => {
+        const linha = document.createElement("div");
+        linha.className = "tabela-linha";
+
+        const ultima = p.historico[p.historico.length - 1];
+        const dataFinal = new Date(ultima ? ultima.hora : Date.now()).toLocaleString("pt-BR");
+
+        linha.innerHTML = `
+            <div><strong>${p.tipo}</strong></div>
+            <div><strong>${p.numero}</strong></div>
+            <div>${p.nome}<br><small>Vendedor: ${p.vendedor || "-"}</small></div>
+            <div>${dataFinal}</div>
+        `;
+
+        const detalhes = document.createElement("div");
+        detalhes.className = "tabela-detalhes";
+        detalhes.innerHTML = p.historico.map(h => `• ${h.acao} — ${new Date(h.hora).toLocaleString("pt-BR")}<br>`).join("");
+        linha.appendChild(detalhes);
+        tabela.appendChild(linha);
+    });
+
+    div.appendChild(tabela);
+
+    document.getElementById("buscaHistorico").oninput = function() {
+        let termo = this.value.toLowerCase().trim();
+        tabela.querySelectorAll(".tabela-linha").forEach(linha => {
+            linha.style.display = linha.textContent.toLowerCase().includes(termo) ? "contents" : "none";
+        });
+    };
+}
+
+function abrirPedidoFinalizado(numero) {
+    let p = historicoFinalizados.find(x => x.numero === numero) || pedidos.find(x => x.numero === numero);
+    if (!p) return;
+    abrirModal();
+    document.getElementById("modalTitulo").innerText = `${p.tipo} ${p.numero}`;
+    document.getElementById("modalInfo").innerHTML = `<b>${p.nome}</b><br>${p.vendedor || ''}<br>`;
+    p.historico.forEach(h => {
+        document.getElementById("modalInfo").innerHTML += `• ${h.acao} — ${new Date(h.hora).toLocaleString()}<br>`;
+    });
+}
+
+function removerFinalizados() {
+    const agora = Date.now();
+    const TEMPO_LIMITE = 5 * 60 * 1000;
+
+    let removidos = [];
+    pedidos = pedidos.filter(p => {
+        if (p.status === "finalizados" && p.finalizadoEm && (agora - p.finalizadoEm >= TEMPO_LIMITE)) {
+            removidos.push(p);
+            return false;
+        }
+        return true;
+    });
+
+    if (removidos.length > 0) {
+        historicoFinalizados = historicoFinalizados.concat(removidos);
+        salvarBanco();
+        renderizar();
+        atualizarContadores();
+    }
+}
+
+function exportarHistoricoCSV() {
+    if (historicoFinalizados.length === 0) return alert("O histórico está vazio!");
+
+    let csv = "Tipo;Número;Cliente;Vendedor;Instalação;Hora Criação;Quem Imprimiu;Hora Impressão;Quem Separou;Hora Separação;Quem Retirou;Quem Conferiu;Hora Retirada\n";
+
+    historicoFinalizados.sort((a,b) => {
+        const ha = a.historico[a.historico.length-1]?.hora || 0;
+        const hb = b.historico[b.historico.length-1]?.hora || 0;
+        return hb - ha;
+    }).forEach(p => {
+        let cliente = (p.nome || "").replace(/[,;"]/g," ");
+        let vendedor = (p.vendedor || "").replace(/[,;"]/g," ");
+        let instalacao = (p.dataInstalacao || "").replace(/[,;"]/g," ");
+
+        let hc="", hi="", qi="", hs="", qs="", hr="", qr="", qc="";
+        p.historico.forEach(h => {
+            const dt = new Date(h.hora).toLocaleString("pt-BR");
+            if (h.acao.includes("Criado")) hc = dt;
+            else if (h.acao.includes("Impresso por")) { qi = h.acao.replace("Impresso por ",""); hi = dt; }
+            else if (h.acao.includes("Separado por")) { qs = h.acao.replace("Separado por ",""); hs = dt; }
+            else if (h.acao.includes("Retirado por")) {
+                const partes = h.acao.split(", conferido por ");
+                qr = partes[0].replace("Retirado por ","");
+                qc = partes[1] || "";
+                hr = dt;
+            }
+        });
+
+        csv += `${p.tipo};${p.numero};${cliente};${vendedor};${instalacao};${hc};${qi};${hi};${qs};${hs};${qr};${qc};${hr}\n`;
+    });
+
+    const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `historico_saba_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+/* Inicialização */
+renderizar();
+atualizarContadores();
+setInterval(removerFinalizados, 10000);
+removerFinalizados();
+
+document.addEventListener('keydown', e => { if (e.key === "Escape") fecharModal(); });
+
+document.getElementById("pesquisaOSPV").addEventListener("keypress", e => { if (e.key === "Enter") pesquisarPedido(); });
+document.getElementById("pesquisaOSPV").addEventListener("input", pesquisarPedido);
+
+["numero","editNumero","numeroCancelar"].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener("keydown", apenasNumeros);
+    el.addEventListener("input", () => limparNaoNumeros(el));
+});
+
+const inputSenha = document.getElementById("inputSenha");
+if (inputSenha) {
+    inputSenha.addEventListener("keydown", e => { if (e.key === "Enter") confirmarSenha(); });
+}
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

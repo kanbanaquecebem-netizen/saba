@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>SABA</title>
+<style>
+/* ======================= Estilo geral ======================= */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000000; /* Fundo preto */
+    margin: 0;
+    padding: 0;
+    color: darkblue;
+}
+
+/* Cabeçalho */
+header {
+    background-color: #000000; /* Fundo preto */
+    color: #ff8c00; /* Laranja chamativo */
+    padding: 20px 0;
+    text-align: center;
+    font-size: 34px;
+    font-weight: bold;
+    position: relative;
+    border-bottom: 3px solid #ff8c00;
+}
+#relogio {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 5px;
+    color: #ff8c00;
+}
+
+.header-buttons {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+}
+#btnCadastro, #btnCancelar, #btnHistorico {
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    border: 2px solid #ff8c00;
+    cursor: pointer;
+    background: black;
+    color: #ff8c00;
+    transition: background-color 0.3s, color 0.3s;
+}
+#btnCadastro:hover, #btnCancelar:hover, #btnHistorico:hover {
+    background: #ff8c00;
+    color: black;
+}
+
+/* ======================= Container principal ======================= */
+.container {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    height: calc(100vh - 140px);
+}
+
+/* Colunas */
+.coluna {
+    flex: 1;
+    background: #ffffffcc;
+    border-radius: 15px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #ff8c00;
+    max-height: 100%;
+}
+.coluna h2 {
+    color: #ff8c00;
+    margin-top: 0;
+    text-align: center;
+    font-size: 26px;
+}
+
+/* ======================= Áreas Em Separação e Aguardando Retirada ======================= */
+
+/* Container das caixas com flex-wrap para múltiplas linhas e scroll vertical */
+#em_separacao, #aguardando_retirada {
+    display: flex;
+    flex-wrap: wrap;            /* Permite quebra de linha */
+    gap: 10px;
+    overflow-y: auto;           /* Scroll vertical */
+    max-height: 400px;          /* Ajuste essa altura conforme necessário */
+    padding-right: 5px;         /* Espaço para scroll */
+}
+
+/* Cards (caixas) mantém tamanho fixo para quebras limpas */
+.card {
+    border-radius: 15px;
+    padding: 15px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    transition: 0.2s;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    min-width: 180px;
+    max-width: 180px;
+}
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+
+/* Cores */
+.red { background-color: #cc3333; color: #fff; }
+.yellow { background-color: #ffdd66; color: #000; }
+.blue { background-color: #3399ff; color: #fff; }
+.green { background-color: #33cc66; color: #fff; }
+
+/* Outras colunas mantêm overflow vertical sem flex-wrap */
+#impressao, #finalizados {
+    overflow-y: auto;
+}
+#impressao .card, #finalizados .card {
+    max-width: none;
+    min-width: auto;
+}
+
+/* Inputs */
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #999;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #ff8c00; /* laranja do tema */
+    color: #000;
+    border: none;
+    cursor: pointer;
+}
+button:disabled {
+    background: #888;
+    cursor: default;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    color: #000;
+    padding: 25px;
+    border-radius: 15px;
+    width: 60%;
+    max-width: 500px;
+    font-size: 16px;
+}
+
+.hidden { display: none !important; }
+
+/* Grid para finalizados grande ao expandir */
+.finalizado-expandido {
+    width: 100%;
+    font-size: 16px;
+}
+</style>
+</head>
+<body>
+
+<header>
+    SABA
+    <div id="relogio"></div>
+    <div class="header-buttons">
+        <button id="btnCadastro" onclick="abrirCadastro()">Cadastrar</button>
+        <button id="btnCancelar" onclick="senhaCancelar()">Cancelar</button>
+        <button id="btnHistorico" onclick="abrirHistorico()">Histórico</button>
+    </div>
+</header>
+
+<div class="container">
+    <div class="coluna">
+        <h2>🖨️ Impressão</h2>
+        <div id="impressao"></div>
+    </div>
+    <div class="coluna">
+        <h2>📦 Em Separação</h2>
+        <div id="em_separacao"></div>
+    </div>
+    <div class="coluna">
+        <h2>📫 Aguardando Retirada</h2>
+        <div id="aguardando_retirada"></div>
+    </div>
+    <div class="coluna">
+        <h2>✅ Finalizados</h2>
+        <div id="finalizados"></div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal" onclick="fecharModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h3 id="modalTitulo"></h3>
+        <p id="modalInfo"></p>
+
+        <div id="campoCadastro" class="hidden">
+            <label>Tipo:</label>
+            <select id="tipo">
+                <option value="OS">OS</option>
+                <option value="PV">PV</option>
+            </select>
+            <label>Número:</label>
+            <input type="text" id="numero" />
+            <label>Nome Técnico / Cliente:</label>
+            <input type="text" id="nome" />
+            <label>Vendedor:</label>
+            <input type="text" id="vendedor" />
+            <button onclick="cadastrar()">Salvar</button>
+        </div>
+
+        <div id="campoCancelar" class="hidden">
+            <label>Digite o número da OS/PV:</label>
+            <input type="text" id="numeroCancelar" oninput="validarCancelar()" />
+            <button id="btnConfirmarCancelar" disabled onclick="cancelarPedido()">Remover</button>
+        </div>
+
+        <div id="campoImpressao" class="hidden">
+            <label>Nome de quem imprimiu:</label>
+            <input type="text" id="inputImpressor" oninput="validarImpressao()" />
+            <button id="btnImpressao" disabled onclick="confirmarImpressao()">Enviar para Em Separação</button>
+        </div>
+
+        <div id="campoSeparador" class="hidden">
+            <label>Nome do Separador:</label>
+            <input type="text" id="inputSeparador" oninput="validarSeparador()" />
+            <button id="btnSeparador" disabled onclick="confirmarSeparacao()">Enviar para Aguardando Retirada</button>
+        </div>
+
+        <div id="campoRetirada" class="hidden">
+            <label>Técnico/Responsável:</label>
+            <input type="text" id="inputTecnico" oninput="validarRetirada()" />
+            <label>Conferente:</label>
+            <input type="text" id="inputConferente" oninput="validarRetirada()" />
+            <button id="btnRetirada" disabled onclick="finalizar()">Finalizar</button>
+        </div>
+
+        <div id="campoHistorico" class="hidden">
+            <h4>Histórico de Finalizados</h4>
+            <div id="listaHistorico"></div>
+            <button onclick="fecharModal()">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ------------------------- Relógio ------------------------- */
+function atualizarRelogio() {
+    const agora = new Date();
+    const h = agora.toLocaleTimeString("pt-BR");
+    const d = agora.toLocaleDateString("pt-BR");
+    document.getElementById("relogio").innerHTML = `${d} — ${h}`;
+}
+setInterval(atualizarRelogio, 1000);
+atualizarRelogio();
+
+/* ------------------------- Banco local ------------------------- */
+let pedidos = JSON.parse(localStorage.getItem("pedidos")) || [];
+let historicoFinalizados = JSON.parse(localStorage.getItem("historicoFinalizados")) || [];
+
+function salvarBanco() {
+    localStorage.setItem("pedidos", JSON.stringify(pedidos));
+    localStorage.setItem("historicoFinalizados", JSON.stringify(historicoFinalizados));
+}
+
+/* ------------------------- Renderizar ------------------------- */
+function renderizar() {
+    const colunas = {
+        impressao: document.getElementById("impressao"),
+        em_separacao: document.getElementById("em_separacao"),
+        aguardando_retirada: document.getElementById("aguardando_retirada"),
+        finalizados: document.getElementById("finalizados")
+    };
+    for (const c in colunas) colunas[c].innerHTML = "";
+
+    pedidos.forEach(p => {
+        let div = document.createElement("div");
+        div.className = `card ${corStatus(p.status)}`;
+        let dataHora = new Date(p.historico[p.historico.length - 1]?.hora || Date.now()).toLocaleString();
+        div.innerHTML = `${emojiStatus(p.status)} ${p.tipo} ${p.numero}<br>${p.nome}<br>${dataHora}`;
+        if (p.status === "finalizados") div.onclick = () => abrirPedidoFinalizado(p.numero);
+        else div.onclick = () => abrirPedido(p.numero);
+        colunas[p.status].appendChild(div);
+    });
+}
+function corStatus(status) {
+    return {
+        impressao: "red",
+        em_separacao: "yellow",
+        aguardando_retirada: "blue",
+        finalizados: "green"
+    }[status];
+}
+function emojiStatus(status) {
+    return {
+        impressao: "🖨️",
+        em_separacao: "📦",
+        aguardando_retirada: "📫",
+        finalizados: "✅"
+    }[status];
+}
+
+/* ------------------------- Modal ------------------------- */
+function abrirModal() { document.getElementById("modal").style.visibility = "visible"; }
+function fecharModal() {
+    document.getElementById("modal").style.visibility = "hidden";
+    document.querySelectorAll(".modal-content > div").forEach(d => d.classList.add("hidden"));
+    // limpa inputs
+    document.querySelectorAll(".modal-content input").forEach(input => input.value = "");
+}
+
+/* ------------------------- Cadastro ------------------------- */
+function abrirCadastro() {
+    abrirModal();
+    document.getElementById("modalTitulo").innerText = "Novo Cadastro";
+    document.getElementById("campoCadastro").classList.remove("hidden");
+}
+function cadastrar() {
+    let tipo = document.getElementById("tipo").value;
+    let numero = document.getElementById("numero").value.trim();
+    let nome = document.getElementById("nome").value.trim();
+    let vendedor = document.getElementById("vendedor").value.trim();
+    if (!numero || !nome) return alert("Preencha todos os campos!");
+    pedidos.push({ tipo, numero, nome, vendedor, status: "impressao", historico: [{ acao: "Criado", hora: new Date() }] });
+    salvarBanco(); renderizar(); fecharModal();
+}
+
+/* ------------------------- Cancelamento ------------------------- */
+function senhaCancelar() {
+    abrirModal();
+    document.getElementById("modalTitulo").innerText = "Cancelar Pedido";
+    document.getElementById("campoCancelar").classList.remove("hidden");
+}
+function validarCancelar() { document.getElementById("btnConfirmarCancelar").disabled = document.getElementById("numeroCancelar").value.trim() === ""; }
+function cancelarPedido() {
+    let n = document.getElementById("numeroCancelar").value.trim();
+    pedidos = pedidos.filter(p => p.numero !== n);
+    salvarBanco(); renderizar(); fecharModal();
+}
+
+/* ------------------------- Workflow ------------------------- */
+let pedidoAtual = null;
+function abrirPedido(numero) {
+    pedidoAtual = pedidos.find(p => p.numero === numero);
+    abrirModal();
+    document.getElementById("modalTitulo").innerText = `${pedidoAtual.tipo} ${pedidoAtual.numero}`;
+    document.getElementById("modalInfo").innerText = `Cliente/Técnico: ${pedidoAtual.nome}\nVendedor: ${pedidoAtual.vendedor}`;
+    if (pedidoAtual.status === "impressao") document.getElementById("campoImpressao").classList.remove("hidden");
+    if (pedidoAtual.status === "em_separacao") document.getElementById("campoSeparador").classList.remove("hidden");
+    if (pedidoAtual.status === "aguardando_retirada") document.getElementById("campoRetirada").classList.remove("hidden");
+}
+
+/* Impressão */
+function validarImpressao() { document.getElementById("btnImpressao").disabled = document.getElementById("inputImpressor").value.trim() === ""; }
+function confirmarImpressao() {
+    let nome = document.getElementById("inputImpressor").value.trim();
+    pedidoAtual.status = "em_separacao";
+    pedidoAtual.historico.push({ acao: `Impresso por ${nome}`, hora: new Date() });
+    salvarBanco(); renderizar(); fecharModal();
+}
+
+/* Separação */
+function validarSeparador() { document.getElementById("btnSeparador").disabled = document.getElementById("inputSeparador").value.trim() === ""; }
+function confirmarSeparacao() {
+    let nome = document.getElementById("inputSeparador").value.trim();
+    pedidoAtual.status = "aguardando_retirada";
+    pedidoAtual.historico.push({ acao: `Separado por ${nome}`, hora: new Date() });
+    salvarBanco(); renderizar(); fecharModal();
+}
+
+/* Retirada */
+function validarRetirada() {
+    let t = document.getElementById("inputTecnico").value.trim();
+    let c = document.getElementById("inputConferente").value.trim();
+    document.getElementById("btnRetirada").disabled = !(t && c);
+}
+function finalizar() {
+    let t = document.getElementById("inputTecnico").value.trim();
+    let c = document.getElementById("inputConferente").value.trim();
+    pedidoAtual.status = "finalizados";
+    pedidoAtual.historico.push({ acao: `Retirado por ${t}, conferido por ${c}`, hora: new Date() });
+    salvarBanco(); renderizar(); fecharModal();
+}
+
+/* Histórico de Finalizados */
+function abrirHistorico() {
+    abrirModal();
+    document.getElementById("modalTitulo").innerText = "Histórico de Finalizados";
+    document.getElementById("campoHistorico").classList.remove("hidden");
+    let div = document.getElementById("listaHistorico");
+    div.innerHTML = "";
+    historicoFinalizados.forEach(p => {
+        let card = document.createElement("div");
+        card.className = "card green finalizado-expandido";
+        let h = "";
+        p.historico.forEach(his => { h += `• ${his.acao} — ${new Date(his.hora).toLocaleString()}<br>`; });
+        card.innerHTML = `${p.tipo} ${p.numero}<br>${p.nome}<br>${p.vendedor}<br>${h}`;
+        div.appendChild(card);
+    });
+}
+
+/* Abrir Finalizado */
+function abrirPedidoFinalizado(numero) {
+    let p = historicoFinalizados.find(x => x.numero === numero) || pedidos.find(x => x.numero === numero);
+    if (!p) return;
+    abrirModal();
+    document.getElementById("modalTitulo").innerText = `${p.tipo} ${p.numero}`;
+    document.getElementById("modalInfo").innerHTML = `<b>${p.nome}</b><br>${p.vendedor}<br>`;
+    let info = "";
+    p.historico.forEach(his => { info += `• ${his.acao} — ${new Date(his.hora).toLocaleString()}<br>`; });
+    document.getElementById("modalInfo").innerHTML += info;
+}
+
+/* Remover Finalizados a cada 10 min */
+function removerFinalizados() {
+    const agora = Date.now();
+    let removidos = [];
+    pedidos = pedidos.filter(p => {
+        if (p.status === "finalizados") {
+            let finalizadoHora = p.historico[p.historico.length - 1].hora;
+            if (agora - new Date(finalizadoHora) >= 600000) { // 10 min = 600000 ms
+                removidos.push(p);
+                return false;
+            }
+        }
+        return true;
+    });
+    if (removidos.length > 0) {
+        historicoFinalizados.push(...removidos);
+        salvarBanco(); renderizar();
+    }
+}
+setInterval(removerFinalizados, 60000);
+
+/* Inicialização */
+renderizar();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,237 @@
+{
+  "pedidos": [
+    {
+      "tipo": "PV",
+      "numero": "2299",
+      "nome": "EVANDRO BRAGA",
+      "vendedor": "FABIANO",
+      "dataInstalacao": "09/02/2026 - Manha",
+      "observacao": "CLIENTE RETIRA CEDO",
+      "status": "finalizados",
+      "criadoEm": "2026-02-09T21:55:13.600Z",
+      "historico": [
+        {
+          "acao": "Criado",
+          "hora": 1770674113600
+        },
+        {
+          "acao": "Impresso por JUNIOR",
+          "hora": 1770719328252
+        },
+        {
+          "acao": "Separado por BRUNO",
+          "hora": 1770722703188
+        },
+        {
+          "acao": "Retirado por EVANDRO, conferido por BRUNO",
+          "hora": 1770722718940
+        }
+      ]
+    }
+  ],
+  "historicoFinalizados": [
+    {
+      "tipo": "OS",
+      "numero": "97784",
+      "nome": "hebron",
+      "vendedor": "andressa",
+      "dataInstalacao": "10/02/2026 - Manha",
+      "observacao": "",
+      "status": "finalizados",
+      "criadoEm": "2026-02-10T11:09:14.714Z",
+      "historico": [
+        {
+          "acao": "Criado",
+          "hora": 1770721754714
+        },
+        {
+          "acao": "Impresso por JUNIOR",
+          "hora": 1770721775684
+        },
+        {
+          "acao": "Separado por JUNIOR",
+          "hora": 1770721802308
+        },
+        {
+          "acao": "Retirado por hebron, conferido por JUNIOR",
+          "hora": 1770721811556
+        }
+      ]
+    },
+    {
+      "tipo": "OS",
+      "numero": "97818",
+      "nome": "hebron",
+      "vendedor": "jo",
+      "dataInstalacao": "10/02/2026 - Manha",
+      "observacao": "",
+      "status": "finalizados",
+      "criadoEm": "2026-02-10T11:10:41.907Z",
+      "historico": [
+        {
+          "acao": "Criado",
+          "hora": 1770721841907
+        },
+        {
+          "acao": "Impresso por JUNIOR",
+          "hora": 1770721847308
+        },
+        {
+          "acao": "Separado por JUNIOR",
+          "hora": 1770721852532
+        },
+        {
+          "acao": "Retirado por hebron, conferido por JUNIOR",
+          "hora": 1770721861084
+        }
+      ]
+    },
+    {
+      "tipo": "OS",
+      "numero": "97756",
+      "nome": "hebron",
+      "vendedor": "debora",
+      "dataInstalacao": "10/02/2026 - Manha",
+      "observacao": "",
+      "status": "finalizados",
+      "criadoEm": "2026-02-10T10:40:22.285Z",
+      "historico": [
+        {
+          "acao": "Criado",
+          "hora": 1770720022285
+        },
+        {
+          "acao": "Impresso por JUNIOR",
+          "hora": 1770722345364
+        },
+        {
+          "acao": "Separado por JUNIOR",
+          "hora": 1770722352652
+        },
+        {
+          "acao": "Retirado por hebron, conferido por JUNIOR",
+          "hora": 1770722360932
+        }
+      ]
+    },
+    {
+      "tipo": "OS",
+      "numero": "97770",
+      "nome": "hebron",
+      "vendedor": "andressa",
+      "dataInstalacao": "10/02/2026 - Manha",
+      "observacao": "",
+      "status": "finalizados",
+      "criadoEm": "2026-02-10T11:19:44.940Z",
+      "historico": [
+        {
+          "acao": "Criado",
+          "hora": 1770722384940
+        },
+        {
+          "acao": "Impresso por JUNIOR",
+          "hora": 1770722389948
+        },
+        {
+          "acao": "Separado por JUNIOR",
+          "hora": 1770722394620
+        },
+        {
+          "acao": "Retirado por hebron, conferido por JUNIOR",
+          "hora": 1770722402348
+        }
+      ]
+    }
+  ],
+  "equipeCadastro": {
+    "impressao": [
+      "ADRIANO",
+      "BRUNO",
+      "FABIANO",
+      "FIGUEIREDO",
+      "JOAO",
+      "JOSE",
+      "JUNIOR",
+      "LEONARDO ASSUNÇÃO",
+      "PAULO",
+      "S/DADOS"
+    ],
+    "separacao": [
+      "ADRIANO",
+      "BRUNO",
+      "FABIANO",
+      "FIGUEIREDO",
+      "JOAO",
+      "JOSE",
+      "JUNIOR",
+      "LEONARDO ASSUNÇÃO",
+      "PAULO",
+      "S/DADOS"
+    ],
+    "conferente": [
+      "ADRIANO",
+      "BRUNO",
+      "FABIANO",
+      "FIGUEIREDO",
+      "JOAO",
+      "JOSE",
+      "JUNIOR",
+      "LEONARDO ASSUNÇÃO",
+      "PAULO",
+      "S/DADOS"
+    ]
+  },
+  "credenciaisEquipe": {
+    "ADRIANO": {
+      "nome": "ADRIANO",
+      "senha": "1234",
+      "precisaTrocar": true
+    },
+    "BRUNO": {
+      "nome": "BRUNO",
+      "senha": "0322",
+      "precisaTrocar": false
+    },
+    "FABIANO": {
+      "nome": "FABIANO",
+      "senha": "1234",
+      "precisaTrocar": true
+    },
+    "FIGUEIREDO": {
+      "nome": "FIGUEIREDO",
+      "senha": "1234",
+      "precisaTrocar": true
+    },
+    "JOAO": {
+      "nome": "JOAO",
+      "senha": "1234",
+      "precisaTrocar": true
+    },
+    "JOSE": {
+      "nome": "JOSE",
+      "senha": "1234",
+      "precisaTrocar": true
+    },
+    "JUNIOR": {
+      "nome": "JUNIOR",
+      "senha": "0606",
+      "precisaTrocar": false
+    },
+    "LEONARDO ASSUNÇÃO": {
+      "nome": "LEONARDO ASSUNÇÃO",
+      "senha": "1234",
+      "precisaTrocar": true
+    },
+    "PAULO": {
+      "nome": "PAULO",
+      "senha": "1234",
+      "precisaTrocar": true
+    },
+    "S/DADOS": {
+      "nome": "S/DADOS",
+      "senha": "1234",
+      "precisaTrocar": true
+    }
+  },
+  "salvoEm": "2026-02-10T11:25:29.896Z"
+}
