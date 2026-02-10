@@ -32,6 +32,7 @@ const DAILY_BACKUP_PREFIX = "data-backup-";
 const DAILY_BACKUP_RETENTION_DAYS = 90;
 
 app.use(express.static(path.join(__dirname, "public")));
+app.get("/health", (_req, res) => res.status(200).send("ok"));
 
 // Pega o IP local da mÃ¡quina para mostrar no console
 function getLocalIP() {
@@ -444,5 +445,17 @@ server.listen(PORT, "0.0.0.0", () => {
     console.log(`   Data dir: ${DATA_DIR}`);
     console.log(`   Dados salvos em: ${DATA_FILE}\n`);
 });
+
+function gracefulShutdown(signal) {
+    console.log(`[SHUTDOWN] Sinal recebido: ${signal}. Encerrando servidor...`);
+    server.close(() => {
+        console.log("[SHUTDOWN] HTTP encerrado com sucesso.");
+        process.exit(0);
+    });
+    setTimeout(() => process.exit(0), 8000);
+}
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 
 
