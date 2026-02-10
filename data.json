@@ -1049,34 +1049,6 @@
     },
     {
       "tipo": "OS",
-      "numero": "97786",
-      "nome": "TIAGO",
-      "vendedor": "TIAGO TROJAN",
-      "dataInstalacao": "10/12/2026 - Manha",
-      "observacao": "",
-      "status": "finalizados",
-      "criadoEm": "2026-02-10T12:39:21.777Z",
-      "historico": [
-        {
-          "acao": "Criado",
-          "hora": 1770727161777
-        },
-        {
-          "acao": "Impresso por PAULO",
-          "hora": 1770727170431
-        },
-        {
-          "acao": "Separado por PAULO",
-          "hora": 1770727181447
-        },
-        {
-          "acao": "Retirado por tiago, conferido por JOAO",
-          "hora": 1770737553771
-        }
-      ]
-    },
-    {
-      "tipo": "OS",
       "numero": "97835",
       "nome": "HEBRON",
       "vendedor": "MARCELA",
@@ -28932,6 +28904,34 @@
           "hora": 1770735493146
         }
       ]
+    },
+    {
+      "tipo": "OS",
+      "numero": "97786",
+      "nome": "TIAGO",
+      "vendedor": "TIAGO TROJAN",
+      "dataInstalacao": "10/12/2026 - Manha",
+      "observacao": "",
+      "status": "finalizados",
+      "criadoEm": "2026-02-10T12:39:21.777Z",
+      "historico": [
+        {
+          "acao": "Criado",
+          "hora": 1770727161777
+        },
+        {
+          "acao": "Impresso por PAULO",
+          "hora": 1770727170431
+        },
+        {
+          "acao": "Separado por PAULO",
+          "hora": 1770727181447
+        },
+        {
+          "acao": "Retirado por tiago, conferido por JOAO",
+          "hora": 1770737553771
+        }
+      ]
     }
   ],
   "equipeCadastro": {
@@ -29024,5 +29024,5 @@
       "precisaTrocar": true
     }
   },
-  "salvoEm": "2026-02-10T15:35:44.409Z"
+  "salvoEm": "2026-02-10T15:37:43.530Z"
 }

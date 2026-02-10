@@ -1210,7 +1210,7 @@
       "vendedor": "ALAN",
       "dataInstalacao": "11/02/2026 - Manha",
       "observacao": "",
-      "status": "em_separacao",
+      "status": "aguardando_retirada",
       "criadoEm": "2026-02-10T15:35:25.572Z",
       "historico": [
         {
@@ -1220,6 +1220,10 @@
         {
           "acao": "Impresso por FIGUEIREDO",
           "hora": 1770737734191
+        },
+        {
+          "acao": "Separado por FIGUEIREDO",
+          "hora": 1770737744078
         }
       ]
     }
@@ -29020,5 +29024,5 @@
       "precisaTrocar": true
     }
   },
-  "salvoEm": "2026-02-10T15:35:34.522Z"
+  "salvoEm": "2026-02-10T15:35:44.409Z"
 }
