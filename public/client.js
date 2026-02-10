@@ -1,6 +1,10 @@
 // client.js - Sincronizacao em tempo real para SABA
 
-const socket = window.socket = io();
+const socket = window.socket = io({
+    path: "/socket.io",
+    transports: ["websocket"],
+    upgrade: false
+});
 
 let ultimaEdicaoLocal = 0;
 const TEMPO_IGNORE_SYNC = 3000;
@@ -103,4 +107,3 @@ socket.on("connect_error", (err) => {
 socket.on("disconnect", (reason) => {
     console.log("[SYNC] Desconectado do servidor:", reason);
 });
-
